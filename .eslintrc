@@ -1,0 +1,11 @@
+{
+    "extends": "@slimio/eslint-config",
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "rules": {
+        "id-length": "off",
+        "jsdoc/require-jsdoc": "off",
+        "no-mixed-operators": "off"
+    }
+}

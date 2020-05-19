@@ -1,0 +1,23 @@
+{
+  "name": "threejs-terrain-editor",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@slimio/eslint-config": "^4.1.0",
+    "eslint": "^7.0.0"
+  },
+  "dependencies": {
+    "@polka/send-type": "^0.5.2",
+    "polka": "^0.5.2",
+    "sirv": "^0.4.2"
+  }
+}
