@@ -1,7 +1,7 @@
 {
   "name": "threejs-terrain-editor",
   "version": "0.1.0",
-  "description": "",
+  "description": "Thee JS Terrain Editor",
   "type": "module",
   "main": "index.js",
   "scripts": {

@@ -39,6 +39,10 @@ export default class Input extends EventEmitter {
         this.wasFullscreen = false;
         this.canvas = canvas;
 
+        this.canvas.requestPointerLock = this.canvas.requestPointerLock ||
+            this.canvas.mozRequestPointerLock ||
+            this.canvas.webkitRequestPointerLock;
+
         // Mouse
         document.addEventListener("mousemove", this.onMouseMove.bind(this));
         document.addEventListener("mousedown", this.onMouseDown.bind(this));
@@ -48,33 +52,45 @@ export default class Input extends EventEmitter {
         document.addEventListener("DOMMouseScroll", this.onMouseWheel.bind(this));
         document.addEventListener("mousewheel", this.onMouseWheel.bind(this));
 
-        if ("onpointerlockchange" in document)
+        if ("onpointerlockchange" in document) {
             document.addEventListener("pointerlockchange", this.onPointerLockChange.bind(this), false);
-        else if ("onmozpointerlockchange" in document)
+        }
+        else if ("onmozpointerlockchange" in document) {
             document.addEventListener("mozpointerlockchange", this.onPointerLockChange.bind(this), false);
-        else if ("onwebkitpointerlockchange" in document)
+        }
+        else if ("onwebkitpointerlockchange" in document) {
             document.addEventListener("webkitpointerlockchange", this.onPointerLockChange.bind(this), false);
+        }
 
-        if ("onpointerlockerror" in document)
+        if ("onpointerlockerror" in document) {
             document.addEventListener("pointerlockerror", this.onPointerLockError.bind(this), false);
-        else if ("onmozpointerlockerror" in document)
+        }
+        else if ("onmozpointerlockerror" in document) {
             document.addEventListener("mozpointerlockerror", this.onPointerLockError.bind(this), false);
-        else if ("onwebkitpointerlockerror" in document)
+        }
+        else if ("onwebkitpointerlockerror" in document) {
             document.addEventListener("webkitpointerlockerror", this.onPointerLockError.bind(this), false);
+        }
 
-        if ("onfullscreenchange" in document)
+        if ("onfullscreenchange" in document) {
             document.addEventListener("fullscreenchange", this.onFullscreenChange.bind(this), false);
-        else if ("onmozfullscreenchange" in document)
+        }
+        else if ("onmozfullscreenchange" in document) {
             document.addEventListener("mozfullscreenchange", this.onFullscreenChange.bind(this), false);
-        else if ("onwebkitfullscreenchange" in document)
+        }
+        else if ("onwebkitfullscreenchange" in document) {
             document.addEventListener("webkitfullscreenchange", this.onFullscreenChange.bind(this), false);
+        }
 
-        if ("onfullscreenerror" in document)
+        if ("onfullscreenerror" in document) {
             document.addEventListener("fullscreenerror", this.onFullscreenError.bind(this), false);
-        else if ("onmozfullscreenerror" in document)
+        }
+        else if ("onmozfullscreenerror" in document) {
             document.addEventListener("mozfullscreenerror", this.onFullscreenError.bind(this), false);
-        else if ("onwebkitfullscreenerror" in document)
+        }
+        else if ("onwebkitfullscreenerror" in document) {
             document.addEventListener("webkitfullscreenerror", this.onFullscreenError.bind(this), false);
+        }
 
         // Touch
         this.canvas.addEventListener("touchstart", this.onTouchStart.bind(this));
@@ -318,8 +334,9 @@ export default class Input extends EventEmitter {
 
     lockMouse() {
         this.wantsPointerLock = true;
-        this.newMouseDelta.x = 0;
-        this.newMouseDelta.y = 0;
+        // this.newMouseDelta.x = 0;
+        // this.newMouseDelta.y = 0;
+        this._doPointerLock();
     }
 
     unlockMouse() {
@@ -343,12 +360,19 @@ export default class Input extends EventEmitter {
     }
 
     _doPointerLock() {
-        if (this.canvas.requestPointerLock) this.canvas.requestPointerLock();
-        else if (this.canvas.webkitRequestPointerLock) this.canvas.webkitRequestPointerLock();
-        else if (this.canvas.mozRequestPointerLock) this.canvas.mozRequestPointerLock();
+        if (this.canvas.requestPointerLock) {
+            this.canvas.requestPointerLock();
+        }
+        else if (this.canvas.webkitRequestPointerLock) {
+            this.canvas.webkitRequestPointerLock();
+        }
+        else if (this.canvas.mozRequestPointerLock) {
+            this.canvas.mozRequestPointerLock();
+        }
     }
 
     onPointerLockChange() {
+        console.log("onPointerLockChange");
         const isPointerLocked = this._isPointerLocked();
         if (this.wasPointerLocked !== isPointerLocked) {
             this.emit("mouseLockStateChange", isPointerLocked ? "active" : "suspended");
@@ -388,9 +412,15 @@ export default class Input extends EventEmitter {
     }
 
     _doGoFullscreen() {
-        if (this.canvas.requestFullscreen) this.canvas.requestFullscreen();
-        else if (this.canvas.webkitRequestFullscreen) this.canvas.webkitRequestFullscreen();
-        else if (this.canvas.mozRequestFullScreen) this.canvas.mozRequestFullScreen();
+        if (this.canvas.requestFullscreen) {
+            this.canvas.requestFullscreen();
+        }
+        else if (this.canvas.webkitRequestFullscreen) {
+            this.canvas.webkitRequestFullscreen();
+        }
+        else if (this.canvas.mozRequestFullScreen) {
+            this.canvas.mozRequestFullScreen();
+        }
     }
 
     onFullscreenChange() {
@@ -452,9 +482,9 @@ export default class Input extends EventEmitter {
         if (this.wantsFullscreen && !this.wasFullscreen) {
             this._doGoFullscreen();
         }
-        if (this.wantsPointerLock && !this.wasPointerLocked) {
-            this._doPointerLock();
-        }
+        // if (this.wantsPointerLock && !this.wasPointerLocked) {
+        //     this._doPointerLock();
+        // }
     }
 
     onMouseUp(event) {
@@ -466,9 +496,9 @@ export default class Input extends EventEmitter {
         if (this.wantsFullscreen && !this.wasFullscreen) {
             this._doGoFullscreen();
         }
-        if (this.wantsPointerLock && !this.wasPointerLocked) {
-            this._doPointerLock();
-        }
+        // if (this.wantsPointerLock && !this.wasPointerLocked) {
+        //     this._doPointerLock();
+        // }
     }
 
     onMouseDblClick(event) {
@@ -590,13 +620,32 @@ export default class Input extends EventEmitter {
             this.newScrollDelta = 0;
         }
 
-        if (this.wantsPointerLock) {
+        // if (this.wantsPointerLock) {
+        //     this.mouseDelta.x = this.newMouseDelta.x;
+        //     this.mouseDelta.y = this.newMouseDelta.y;
+        //     this.newMouseDelta.x = 0;
+        //     this.newMouseDelta.y = 0;
+        // }
+        // else if (this.newMousePosition !== null) {
+        //     this.mouseDelta.x = this.newMousePosition.x - this.mousePosition.x;
+        //     this.mouseDelta.y = this.newMousePosition.y - this.mousePosition.y;
+
+        //     this.mousePosition.x = this.newMousePosition.x;
+        //     this.mousePosition.y = this.newMousePosition.y;
+        //     this.newMousePosition = null;
+        // }
+        // else {
+        //     this.mouseDelta.x = 0;
+        //     this.mouseDelta.y = 0;
+        // }
+
+        if (this.newMousePosition === null) {
             this.mouseDelta.x = this.newMouseDelta.x;
             this.mouseDelta.y = this.newMouseDelta.y;
             this.newMouseDelta.x = 0;
             this.newMouseDelta.y = 0;
         }
-        else if (this.newMousePosition !== null) {
+        else {
             this.mouseDelta.x = this.newMousePosition.x - this.mousePosition.x;
             this.mouseDelta.y = this.newMousePosition.y - this.mousePosition.y;
 
@@ -604,10 +653,7 @@ export default class Input extends EventEmitter {
             this.mousePosition.y = this.newMousePosition.y;
             this.newMousePosition = null;
         }
-        else {
-            this.mouseDelta.x = 0;
-            this.mouseDelta.y = 0;
-        }
+
 
         for (let i = 0; i < this.mouseButtons.length; i++) {
             const mouseButton = this.mouseButtons[i];

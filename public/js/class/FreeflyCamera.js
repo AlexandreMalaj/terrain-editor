@@ -33,6 +33,8 @@ export default class FreeFlyCamera extends EventEmitter {
         this.autoForward = false;
 
         this.mouseButtonDown = false;
+
+        this.lockMouse = false;
     }
 
     move() {
@@ -74,15 +76,37 @@ export default class FreeFlyCamera extends EventEmitter {
         const mouseDelta = this.input.getMouseDelta();
         // console.log(mouseDelta);
         this.camera.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), -mouseDelta.x * this.rollSpeed * game.camera.aspect);
+
         this.camera.rotateX(mouseDelta.y * this.rollSpeed);
+
+        // improve this part
+        const rotationZ = this.camera.getWorldDirection(new THREE.Vector3()).z;
+        if (rotationZ <= -0.98 || rotationZ >= 0.98) {
+            this.camera.rotateX(-mouseDelta.y * this.rollSpeed);
+        }
     }
 
     update() {
         this.move();
-        if (this.input.isMouseButtonDown(1)) {
+        if (this.input.wasMouseButtonJustPressed(1)) {
+            // this.input.setMouseVisible(false);
+            this.lockMouse = true;
+        }
+        if (this.input.isMouseButtonDown(1) && this.lockMouse === true) {
             this.input.lockMouse();
             this.rotate();
         }
-        this.input.unlockMouse();
+        if (this.input.wasMouseButtonJustReleased(1)) {
+            this.lockMouse = false;
+            // this.input.setMouseVisible(true);
+        }
+
+        if (this.lockMouse === true) {
+            // console.log("LockMouse !");
+        }
+        else {
+            // console.log("UnlockMouse !");
+            this.input.unlockMouse();
+        }
     }
 }
