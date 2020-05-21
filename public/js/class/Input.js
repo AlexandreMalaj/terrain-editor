@@ -9,6 +9,7 @@ import EventEmitter from "./EventEmitter.js";
 // Require Third-party Dependencies
 // import THREE from "three";
 
+/* eslint-disable max-depth */
 export default class Input extends EventEmitter {
     constructor(canvas, options = {}) {
         super();
@@ -372,7 +373,6 @@ export default class Input extends EventEmitter {
     }
 
     onPointerLockChange() {
-        console.log("onPointerLockChange");
         const isPointerLocked = this._isPointerLocked();
         if (this.wasPointerLocked !== isPointerLocked) {
             this.emit("mouseLockStateChange", isPointerLocked ? "active" : "suspended");
@@ -673,10 +673,10 @@ export default class Input extends EventEmitter {
             touch.wasEnded = wasDown && !touch.isDown;
         }
 
-        for (const buttonDown of this.keyboardButtonsDown) {
-            const button = this._getKeyboardButton(buttonDown);
-            button.isDown = true;
-        }
+        // for (const buttonDown of this.keyboardButtonsDown) {
+        //     const button = this._getKeyboardButton(buttonDown);
+        //     button.isDown = true;
+        // }
 
         for (const [code, keyboardButton] of this.keyboardButtons) {
             const wasDown = keyboardButton.isDown;
@@ -785,8 +785,12 @@ export default class Input extends EventEmitter {
                         else {
                             // Check for auto-repeat deadline
                             if (currentAutoRepeat.time <= now) {
-                                if (currentAutoRepeat.positive) autoRepeatedAxis.wasPositiveJustAutoRepeated = true;
-                                else autoRepeatedAxis.wasNegativeJustAutoRepeated = true;
+                                if (currentAutoRepeat.positive) {
+                                    autoRepeatedAxis.wasPositiveJustAutoRepeated = true;
+                                }
+                                else {
+                                    autoRepeatedAxis.wasNegativeJustAutoRepeated = true;
+                                }
                                 currentAutoRepeat.time = now + this.gamepadAxisAutoRepeatRateMs;
                             }
                         }

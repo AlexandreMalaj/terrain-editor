@@ -1,4 +1,3 @@
-import Input from "./Input.js";
 import EventEmitter from "./EventEmitter.js";
 
 export default class FreeFlyCamera extends EventEmitter {
@@ -13,17 +12,18 @@ export default class FreeFlyCamera extends EventEmitter {
             left: options.left || "KeyA",
             right: options.right || "KeyD",
             up: options.up || "Space",
-            down: options.down || "ShiftLeft"
+            down: options.down || "ShiftLeft",
+            speed: options.speed || 0.1
         };
-        console.log(`${this.keys.forward} code: ${this.keys.forward.charCodeAt(0)}`);
-        console.log(`${this.keys.backward} code: ${this.keys.backward.charCodeAt(0)}`);
-        console.log(`${this.keys.left} code: ${this.keys.left.charCodeAt(0)}`);
-        console.log(`${this.keys.right} code: ${this.keys.right.charCodeAt(0)}`);
-        console.log(`${this.keys.up} code: ${this.keys.up.charCodeAt(0)}`);
-        console.log(`${this.keys.down} code: ${this.keys.down.charCodeAt(0)}`);
+        // console.log(`${this.keys.forward} code: ${this.keys.forward.charCodeAt(0)}`);
+        // console.log(`${this.keys.backward} code: ${this.keys.backward.charCodeAt(0)}`);
+        // console.log(`${this.keys.left} code: ${this.keys.left.charCodeAt(0)}`);
+        // console.log(`${this.keys.right} code: ${this.keys.right.charCodeAt(0)}`);
+        // console.log(`${this.keys.up} code: ${this.keys.up.charCodeAt(0)}`);
+        // console.log(`${this.keys.down} code: ${this.keys.down.charCodeAt(0)}`);
         this.camera = camera;
 
-        this.movementSpeed = 0.1;
+        this.movementSpeed = this.keys.speed;
         this.rollSpeed = 0.5;
 
         // this.rotationX = this.camera.rotation.x;
@@ -80,8 +80,9 @@ export default class FreeFlyCamera extends EventEmitter {
         this.camera.rotateX(mouseDelta.y * this.rollSpeed);
 
         // improve this part
+        const MAX_ROTATION = 0.98;
         const rotationZ = this.camera.getWorldDirection(new THREE.Vector3()).z;
-        if (rotationZ <= -0.98 || rotationZ >= 0.98) {
+        if (rotationZ <= -MAX_ROTATION || rotationZ >= MAX_ROTATION) {
             this.camera.rotateX(-mouseDelta.y * this.rollSpeed);
         }
     }
