@@ -6,9 +6,6 @@
 // Require Node.js Dependencies
 import EventEmitter from "./EventEmitter.js";
 
-// Require Third-party Dependencies
-// import THREE from "three";
-
 /* eslint-disable max-depth */
 export default class Input extends EventEmitter {
     constructor(canvas, options = {}) {

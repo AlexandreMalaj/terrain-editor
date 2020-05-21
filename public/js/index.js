@@ -11,14 +11,14 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 game.init(camera);
 window.game = game;
 
-// const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
+const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
 
 
 // const geometry = new THREE.PlaneBufferGeometry(10, 10, 10, 10);
 // console.log(geometry);
 // const material = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, wireframe: true });
 
-const terrain = new Terrain(128);
+const terrain = new Terrain(128, camera);
 
 // const geometry = new THREE.PlaneBufferGeometry(10, 10, 10, 10);
 // const material = new THREE.MeshBasicMaterial({ color: 0xff00ff, side: THREE.DoubleSide, wireframe: true });
@@ -41,5 +41,5 @@ game.on("update", () => {
     // const intersects = new THREE.Vector3();
     // raycaster.ray.intersectPlane(infinitPlane, intersects);
     terrain.update();
-    // freefly.update();
+    freefly.update();
 });

@@ -26,9 +26,6 @@ export default class FreeFlyCamera extends EventEmitter {
         this.movementSpeed = this.keys.speed;
         this.rollSpeed = 0.5;
 
-        // this.rotationX = this.camera.rotation.x;
-        // this.rotationY = this.camera.rotation.y;
-
         this.dragToLook = false;
         this.autoForward = false;
 
@@ -39,7 +36,6 @@ export default class FreeFlyCamera extends EventEmitter {
 
     move() {
         const vector = new THREE.Vector3(0);
-        // console.log(this.input.isButtonDown(this.keys.forward));
         if (this.input.isKeyDown(this.keys.forward)) {
             vector.z -= 1;
         }
@@ -61,11 +57,6 @@ export default class FreeFlyCamera extends EventEmitter {
             vector.x -= 1;
         }
 
-        // const AngleY = this.camera.rotation.y;
-
-        // console.log(vector);
-        // console.log(vector.normalize());
-
         const translation = new THREE.Vector3(vector.x, 0, vector.z);
         this.camera.position.z += vector.y * this.movementSpeed;
 
@@ -74,7 +65,6 @@ export default class FreeFlyCamera extends EventEmitter {
 
     rotate() {
         const mouseDelta = this.input.getMouseDelta();
-        // console.log(mouseDelta);
         this.camera.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), -mouseDelta.x * this.rollSpeed * game.camera.aspect);
 
         this.camera.rotateX(mouseDelta.y * this.rollSpeed);
@@ -89,24 +79,12 @@ export default class FreeFlyCamera extends EventEmitter {
 
     update() {
         this.move();
-        if (this.input.wasMouseButtonJustPressed(1)) {
-            // this.input.setMouseVisible(false);
-            this.lockMouse = true;
-        }
-        if (this.input.isMouseButtonDown(1) && this.lockMouse === true) {
+        if (this.input.isMouseButtonDown(1)) {
             this.input.lockMouse();
             this.rotate();
         }
         if (this.input.wasMouseButtonJustReleased(1)) {
             this.lockMouse = false;
-            // this.input.setMouseVisible(true);
-        }
-
-        if (this.lockMouse === true) {
-            // console.log("LockMouse !");
-        }
-        else {
-            // console.log("UnlockMouse !");
             this.input.unlockMouse();
         }
     }
