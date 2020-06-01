@@ -10,22 +10,28 @@ import Input from "./Input.js";
 import Scene from "./Scene.js";
 
 export default class GameRenderer extends EventEmitter {
-    constructor() {
+    constructor(domElement) {
         super();
+
+        this.domElement = domElement;
 
         this.isInitialized = false;
         this.renderer = new THREE.WebGLRenderer({
             antialias: true
         });
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        // this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize(this.domElement.clientWidth, this.domElement.clientHeight, false);
+        this.renderer.domElement.setAttribute("tabIndex", 0);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.BasicShadowMap;
         this.objectsToBeDeleted = [];
 
         // const gameElement = document.getElementByName("body");
         // gameElement.appendChild(this.renderer.domElement);
-        document.body.appendChild(this.renderer.domElement);
+
+        // document.body.appendChild(this.renderer.domElement);
+        this.domElement.appendChild(this.renderer.domElement);
 
         this.input = new Input(this.renderer.domElement);
         this.framesPerSecond = 60;
@@ -122,8 +128,13 @@ export default class GameRenderer extends EventEmitter {
         }
 
         this.emit("resize");
-        this.camera.aspect = window.innerWidth / window.innerHeight;
+        // this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.aspect = this.domElement.offsetWidth / this.domElement.offsetHeight;
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // console.log("offset:", this.domElement.offsetWidth, this.domElement.offsetHeight);
+        // console.log("client:", this.domElement.clientWidth, this.domElement.clientHeight);
+        // this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize(this.domElement.offsetWidth, this.domElement.offsetHeight, false);
     }
 }

@@ -36,19 +36,20 @@ export default class Input extends EventEmitter {
         this.wasPointerLocked = false;
         this.wasFullscreen = false;
         this.canvas = canvas;
+        // this.focused = false;
 
         this.canvas.requestPointerLock = this.canvas.requestPointerLock ||
             this.canvas.mozRequestPointerLock ||
             this.canvas.webkitRequestPointerLock;
 
         // Mouse
-        document.addEventListener("mousemove", this.onMouseMove.bind(this));
-        document.addEventListener("mousedown", this.onMouseDown.bind(this));
-        document.addEventListener("dblclick", this.onMouseDblClick.bind(this));
-        document.addEventListener("mouseup", this.onMouseUp.bind(this));
-        document.addEventListener("contextmenu", this.onContextMenu.bind(this));
-        document.addEventListener("DOMMouseScroll", this.onMouseWheel.bind(this));
-        document.addEventListener("mousewheel", this.onMouseWheel.bind(this));
+        this.canvas.addEventListener("mousemove", this.onMouseMove.bind(this));
+        this.canvas.addEventListener("mousedown", this.onMouseDown.bind(this));
+        this.canvas.addEventListener("dblclick", this.onMouseDblClick.bind(this));
+        this.canvas.addEventListener("mouseup", this.onMouseUp.bind(this));
+        this.canvas.addEventListener("contextmenu", this.onContextMenu.bind(this));
+        this.canvas.addEventListener("DOMMouseScroll", this.onMouseWheel.bind(this));
+        this.canvas.addEventListener("mousewheel", this.onMouseWheel.bind(this));
 
         if ("onpointerlockchange" in document) {
             document.addEventListener("pointerlockchange", this.onPointerLockChange.bind(this), false);
@@ -96,9 +97,14 @@ export default class Input extends EventEmitter {
         this.canvas.addEventListener("touchmove", this.onTouchMove.bind(this));
 
         // Keyboard
-        document.addEventListener("keydown", this.onKeyDown.bind(this));
-        document.addEventListener("keypress", this.onKeyPress.bind(this));
-        document.addEventListener("keyup", this.onKeyUp.bind(this));
+        this.canvas.addEventListener("keydown", this.onKeyDown.bind(this));
+        this.canvas.addEventListener("keypress", this.onKeyPress.bind(this));
+        this.canvas.addEventListener("keyup", this.onKeyUp.bind(this));
+
+        // this.canvas.addEventListener("focus", () => {
+        //     console.log("canvas focused !");
+        //     this.focused = true;
+        // });
 
         // Gamepad
         for (let i = 0; i < 4; i++) {
@@ -112,7 +118,7 @@ export default class Input extends EventEmitter {
             window.onbeforeunload = this.doExitCallback;
         }
 
-        window.addEventListener("blur", this.onBlur.bind(this));
+        this.canvas.addEventListener("blur", this.onBlur.bind(this));
         this.reset();
     }
 
@@ -436,6 +442,7 @@ export default class Input extends EventEmitter {
     }
 
     onBlur() {
+        // this.focused = false;
         this.reset();
     }
 
@@ -611,6 +618,10 @@ export default class Input extends EventEmitter {
     }
 
     update() {
+        // if (this.focused === false) {
+        //     return;
+        // }
+
         this.mouseButtonsDown[5] = this.newScrollDelta > 0;
         this.mouseButtonsDown[6] = this.newScrollDelta < 0;
         if (this.newScrollDelta !== 0) {

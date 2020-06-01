@@ -6,9 +6,27 @@
 html, body {
     overflow: hidden;
     height: 100%;
+    width: 100%;
 }
 
-canvas{
+body {
+    display: flex;
+}
+
+#game {
+    flex-grow: 1;
+    background: red;
+    overflow: hidden;
+}
+
+nav {
+    flex-basis: 300px;
+    flex-shrink: 0;
+    /* width: 300px; */
+}
+
+canvas {
+    display: block;
     width: 100%;
     height: 100%;
 }

@@ -3,9 +3,11 @@ import GameRenderer from "./class/GameRenderer.js";
 import Terrain from "./Terrain.js";
 
 const raycaster = new THREE.Raycaster();
-const game = new GameRenderer();
+const gameDOM = document.getElementById("game");
+const game = new GameRenderer(gameDOM);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+// camera.far = 100;
 game.init(camera);
 window.game = game;
 
