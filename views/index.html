@@ -14,10 +14,21 @@
         <!-- <canvas width="600" height="20"></canvas> -->
     </section>
     <nav>
-        <section class="title">Terrain Tools</section>
-        <ul>
-            <li><li>
-        </ul>
+        <section class="title">Terrain Tool Panel</section>
+        <section class="item">
+            <div class="title"><p>Camera Transform</p></div>
+            <ul id="camera">
+                <li>Position: x:, y:, z:</li>
+                <li>Orientation: x:, y:, z:</li>
+            </ul>
+        </section>
+        <section class="item">
+            <div class="title"><p>Terrain Info</p></div>
+            <ul id="terrain">
+                <li id="terrainMode">TerrainMode: <span>Vertex</span></li>
+                <li id="wireframe"><label>Wireframe: <input type="checkbox"></label></span></li>
+            </ul>
+        </section>
     </nav>
 </body>
 </html>

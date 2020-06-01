@@ -10,14 +10,21 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 // camera.far = 100;
 game.init(camera);
 window.game = game;
+// camera.up.set(0, 1, 0);
+// const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
+// const helper = new THREE.PlaneHelper(plane, 1, 0xffff00);
+// game.currentScene.add(helper);
 
+const axesHelper = new THREE.AxesHelper(5);
+game.currentScene.add(axesHelper);
 
 const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
 const terrain = new Terrain(128, camera);
 
-camera.position.z = 5;
-camera.position.y = -4.5;
-camera.rotation.x = 0.5;
+
+camera.position.z = 50;
+camera.position.y = 45;
+camera.rotation.x = -0.5;
 
 game.on("update", () => {
     // const mousePos = game.input.getMousePosition();

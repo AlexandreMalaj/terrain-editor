@@ -58,23 +58,24 @@ export default class FreeFlyCamera extends EventEmitter {
         }
 
         const translation = new THREE.Vector3(vector.x, 0, vector.z);
-        this.camera.position.z += vector.y * this.movementSpeed;
+        this.camera.position.y += vector.y * this.movementSpeed;
 
         this.camera.translateOnAxis(translation.normalize(), this.movementSpeed);
     }
 
     rotate() {
         const mouseDelta = this.input.getMouseDelta();
-        this.camera.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), -mouseDelta.x * this.rollSpeed * game.camera.aspect);
+        this.camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -mouseDelta.x * this.rollSpeed * game.camera.aspect);
 
         this.camera.rotateX(mouseDelta.y * this.rollSpeed);
 
         // improve this part
-        const MAX_ROTATION = 0.98;
-        const rotationZ = this.camera.getWorldDirection(new THREE.Vector3()).z;
-        if (rotationZ <= -MAX_ROTATION || rotationZ >= MAX_ROTATION) {
-            this.camera.rotateX(-mouseDelta.y * this.rollSpeed);
-        }
+        // const MAX_ROTATION = 0.98;
+        // const rotationX = this.camera.getWorldDirection(new THREE.Vector3()).z;
+        // console.log(rotationX);
+        // if (rotationX <= -MAX_ROTATION || rotationX >= MAX_ROTATION) {
+        //     this.camera.rotateX(-mouseDelta.y * this.rollSpeed);
+        // }
     }
 
     update() {

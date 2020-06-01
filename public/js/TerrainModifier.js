@@ -64,13 +64,13 @@ export default class TerrainModifier {
             const minX = Math.ceil(point.x - this.brush.size);
             // minX = minX < this.minX ? this.minX : minX;
 
-            const minZ = Math.ceil(point.y - this.brush.size);
+            const minZ = Math.ceil(point.z - this.brush.size);
             // minZ = minZ < this.minZ ? this.minZ : minZ;
 
             const maxX = Math.floor(point.x + this.brush.size);
             // maxX = maxX > this.maxX ? this.maxX : maxX;
 
-            const maxZ = Math.floor(point.y + this.brush.size);
+            const maxZ = Math.floor(point.z + this.brush.size);
             // maxZ = maxZ > this.maxZ ? this.maxZ : maxZ;
 
             // new to improve later with multiple plane
@@ -85,9 +85,9 @@ export default class TerrainModifier {
                     if (typeof this.points[x][z] === "undefined") {
                         continue;
                     }
-                    const distance = Math.pow(x - point.x, 2) + Math.pow(z - point.y, 2);
+                    const distance = Math.pow(x - point.x, 2) + Math.pow(z - point.z, 2);
                     if (distance <= radiusSq) {
-                        pointsArray.push(x, z, this.points[x][z].y + 0.05);
+                        pointsArray.push(x, this.points[x][z].y + 0.05, z);
                         pointsInBrush.push(this.points[x][z]);
                     }
                 }
@@ -122,7 +122,7 @@ export default class TerrainModifier {
             }
             const brushSizeSq = this.brush.size * this.brush.size;
             for (const point of pointsInBrush) {
-                const distance = Math.pow(brushPoint.x - point.x, 2) + Math.pow(brushPoint.y - point.z, 2);
+                const distance = Math.pow(brushPoint.x - point.x, 2) + Math.pow(brushPoint.z - point.z, 2);
 
                 const factor = 1 - distance / brushSizeSq;
                 const easedFactor = Easing.smoothstep(0, 1, factor);
@@ -149,11 +149,10 @@ export default class TerrainModifier {
                 return;
             }
 
-            console.log(brushPoint.z);
             for (const point of pointsInBrush) {
                 const { index, object: geometry } = this.points[point.x][point.z];
-                geometry.attributes.position.array[index] = brushPoint.z;
-                this.points[point.x][point.z].y = brushPoint.z;
+                geometry.attributes.position.array[index] = brushPoint.y;
+                this.points[point.x][point.z].y = brushPoint.y;
 
                 // try to see if we can update geometry if we switch for multiple plain
                 geometry.attributes.position.needsUpdate = true;
@@ -167,9 +166,8 @@ export default class TerrainModifier {
             if (game.input.isKeyDown("ControlLeft")) {
                 return;
             }
-            console.log(brushPoint.z);
-            let total = 0;
 
+            let total = 0;
             for (const point of pointsInBrush) {
                 total += this.points[point.x][point.z].y;
             }

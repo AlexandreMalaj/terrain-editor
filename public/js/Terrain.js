@@ -5,7 +5,6 @@ import TerrainModifier from "./TerrainModifier.js";
 const {
     Vector3,
     Raycaster,
-    Points,
 
     MeshBasicMaterial,
     MeshPhongMaterial,
@@ -82,15 +81,18 @@ export default class Terrain {
 
         const geometry = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
         // console.log(geometry);
+        geometry.rotateX(Math.PI / 2);
 
         this.wireframeMaterial = new MeshBasicMaterial(terrainMeterial);
         const basicMaterial = new MeshBasicMaterial({
-            color: 0x00ff00,
+            color: 0xffff00,
             side: THREE.DoubleSide
         });
 
         this.mesh = new Mesh(geometry, basicMaterial);
+        // this.mesh.rotation.x = Math.PI / 2;
         const wireframeMesh = new Mesh(geometry, this.wireframeMaterial);
+        // wireframeMesh.rotation.x = Math.PI / 2;
         game.currentScene.add(this.mesh);
         game.currentScene.add(wireframeMesh);
 
@@ -100,6 +102,7 @@ export default class Terrain {
     initPointsGeometry(geometry) {
         // const goePos = geometry.transform.position;
         const geoPoints = geometry.getAttribute("position").array;
+        console.log(geometry);
         // console.log(goePos);
 
         for (let x = this.minX; x <= this.maxX; x++) {
@@ -117,11 +120,12 @@ export default class Terrain {
         for (let i = 0; i < geoPoints.length - 1 / 3; i += 3) {
             const pos = {
                 x: geoPoints[i],
-                z: geoPoints[i + 1],
-                y: geoPoints[i + 2]
+                y: geoPoints[i + 1],
+                z: geoPoints[i + 2]
             };
+            // console.log(pos);
             const obj = this.points[pos.x][pos.z];
-            obj.index = i + 2;
+            obj.index = i + 1;
             obj.object = geometry;
             // console.log(obj.index);
         }
@@ -133,14 +137,14 @@ export default class Terrain {
             const currentMode = this.mode;
             const allModes = [...Terrain.MODE];
             const nextIndex = allModes.indexOf(currentMode) + 1;
-            const newModeIndex = nextIndex >= allModes.lenght ? 0 : nextIndex;
-
+            const newModeIndex = nextIndex >= allModes.length ? 0 : nextIndex;
             this.mode = allModes[newModeIndex];
         }
-
         if (typeof newMode === "string" && Terrain.MODE.has(newMode)) {
             this.mode = newMode;
         }
+        const terrainModeElem = document.querySelector("#terrainMode > span");
+        terrainModeElem.textContent = this.mode;
     }
 
     updatePlane() {
@@ -151,103 +155,6 @@ export default class Terrain {
 
     updateTerrainMaterial() {
 
-    }
-
-    // changeBrushSize() {
-    //     if (this.input.isKeyDown("ControlLeft")) {
-    //         // console.log("left control down");
-    //         const mouseDeltaX = this.input.getMouseDelta().x;
-    //         const newSize = this.brush.size + mouseDeltaX * 20;
-    //         this.brush.changeSize(newSize);
-    //         // console.log(this.brush.size);
-    //     }
-    // }
-
-    // getPointsInBrush() {
-    //     const [intersect] = this.raycaster.intersectObject(this.mesh, false);
-    //     if (typeof intersect !== "undefined") {
-    //         let { point } = intersect;
-    //         if (this.input.wasKeyJustPressed("ControlLeft")) {
-    //             this.keepPointEditTerrain = point;
-    //         }
-    //         if (this.input.isKeyDown("ControlLeft")) {
-    //             point = this.keepPointEditTerrain;
-    //         }
-    //         // console.log(point);
-
-    //         let minX = Math.ceil(point.x - this.brush.size);
-    //         minX = minX < this.minX ? this.minX : minX;
-
-    //         let minZ = Math.ceil(point.y - this.brush.size);
-    //         minZ = minZ < this.minZ ? this.minZ : minZ;
-
-    //         let maxX = Math.floor(point.x + this.brush.size);
-    //         maxX = maxX > this.maxX ? this.maxX : maxX;
-
-    //         let maxZ = Math.floor(point.y + this.brush.size);
-    //         maxZ = maxZ > this.maxZ ? this.maxZ : maxZ;
-
-    //         // new to improve later with multiple plane
-    //         const pointsArray = [];
-    //         const pointsInBrush = [];
-    //         const radiusSq = Math.pow(this.brush.size, 2);
-    //         for (let x = minX; x <= maxX; x++) {
-    //             for (let z = minZ; z <= maxZ; z++) {
-    //                 const distance = Math.pow(x - point.x, 2) + Math.pow(z - point.y, 2);
-    //                 if (distance <= radiusSq) {
-    //                     pointsArray.push(x, z, this.points[x][z].y + 0.05);
-    //                     pointsInBrush.push(this.points[x][z]);
-    //                 }
-    //             }
-    //         }
-    //         const vertices = new Float32Array(pointsArray);
-    //         this.pointGeometry.addAttribute("position", new THREE.BufferAttribute(vertices, 3));
-
-    //         return {
-    //             brushPoint: point,
-    //             pointsInBrush
-    //         };
-    //     }
-
-    //     const vertices = new Float32Array([]);
-    //     this.pointGeometry.addAttribute("position", new THREE.BufferAttribute(vertices, 3));
-
-    //     return {
-    //         brushPoint: null,
-    //         pointsInBrush: []
-    //     };
-    // }
-
-    updateEditTerrain() {
-        // this.changeBrushSize();
-        // const { brushPoint, pointsInBrush } = this.getPointsInBrush();
-        // console.log(pointsInBrush);
-        // let STRENGTH = 0.3;
-        // let down = false;
-        // if (this.input.isMouseButtonDown(2)) {
-        //     down = true;
-        //     STRENGTH = -STRENGTH;
-        // }
-        // if (this.input.isMouseButtonDown(0) || down === true) {
-        //     if (this.input.isKeyDown("ControlLeft")) {
-        //         return;
-        //     }
-        //     const brushSizeSq = this.brush.size * this.brush.size;
-        //     for (const point of pointsInBrush) {
-        //         const distance = Math.pow(brushPoint.x - point.x, 2) + Math.pow(brushPoint.y - point.z, 2);
-
-        //         const factor = 1 - distance / brushSizeSq;
-        //         const easedFactor = Easing.smoothstep(0, 1, factor);
-
-        //         // reprendre la plan geometrique
-        //         const { index, object: geometry } = this.points[point.x][point.z];
-        //         geometry.attributes.position.array[index] += easedFactor * STRENGTH;
-        //         this.points[point.x][point.z].y += easedFactor * STRENGTH;
-
-        //         // try to see if we can update geometry if we switch for multiple plain
-        //         geometry.attributes.position.needsUpdate = true;
-        //     }
-        // }
     }
 
     updatePaint() {
@@ -262,7 +169,7 @@ export default class Terrain {
         // const mousePos = game.input.getMousePosition();
         // this.raycaster.setFromCamera(mousePos, this.camera);
         switch (this.mode) {
-            case "vertex": {
+            case "terrainModifier": {
                 // this.updateEditTerrain();
                 this.terrainModifier.update();
                 break;
@@ -276,7 +183,7 @@ export default class Terrain {
                 break;
             }
             default: {
-                this.updateMoveTerrain();
+                this.terrainModifier.update();
             }
         }
         if (this.input.wasKeyJustPressed("Tab")) {
@@ -284,4 +191,4 @@ export default class Terrain {
         }
     }
 }
-Terrain.MODE = new Set(["vertex", "paint", "plane"]);
+Terrain.MODE = new Set(["terrainModifier", "paint", "plane"]);
