@@ -61,24 +61,16 @@ export default class Terrain {
 
         // console.log(this.points);
 
-
-        // this.planes = [geometry];
         // this.materials = [basicMaterial];
 
         this.infinitPlane = new Plane(new Vector3(0, 1, 0));
         // game.currentScene.add(this.infinitPlane);
 
-        // this.raycaster = new THREE.Raycaster();
+        this.raycaster = new Raycaster();
         this.initialized = true;
     }
 
     initTerrainGeometry(terrainMeterial) {
-        // this.pointGeometry = new BufferGeometry();
-        // const pointMaterial = new PointsMaterial({ color: 0xff0000, size: 0.5 });
-        // const pointMesh = new Points(this.pointGeometry, pointMaterial);
-        // game.currentScene.add(pointMesh);
-
-
         const geometry = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
         // console.log(geometry);
         geometry.rotateX(Math.PI / 2);
@@ -90,19 +82,61 @@ export default class Terrain {
         });
 
         this.mesh = new Mesh(geometry, basicMaterial);
-        // this.mesh.rotation.x = Math.PI / 2;
         const wireframeMesh = new Mesh(geometry, this.wireframeMaterial);
-        // wireframeMesh.rotation.x = Math.PI / 2;
         game.currentScene.add(this.mesh);
         game.currentScene.add(wireframeMesh);
 
+        this.planes = [];
+        this.planes[0] = [];
+        this.planes[0][0] = {
+            plane: this.mesh
+        };
+
+        this.ghostPlanes = [];
+
+        this.initGhostPlane(this.mesh);
         this.initPointsGeometry(geometry);
+    }
+
+    initGhostPlane(planeMesh) {
+        console.log(planeMesh);
+        const { position } = planeMesh;
+
+        this.ghostPlaneMaterial = new MeshBasicMaterial({
+            color: 0x00ff00,
+            side: THREE.DoubleSide,
+            visible: false
+        });
+
+        for (let x = position.x - this.size; x <= position.x + this.size; x += this.size * 2) {
+            const ghostPlaneGeo = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
+            ghostPlaneGeo.rotateX(Math.PI / 2);
+            ghostPlaneGeo.translate(x, 0, 0);
+
+            const ghostMesh = new Mesh(ghostPlaneGeo, this.ghostPlaneMaterial);
+            game.currentScene.add(ghostMesh);
+            this.ghostPlanes[x] = [];
+            this.ghostPlanes[x][0] = ghostMesh;
+            // this.ghostPlanes.push(ghostMesh);
+        }
+        for (let z = position.z - this.size; z <= position.z + this.size; z += this.size * 2) {
+            const ghostPlaneGeo = new PlaneBufferGeometry(this.size, this.size, 1, 1);
+            ghostPlaneGeo.rotateX(Math.PI / 2);
+            ghostPlaneGeo.translate(0, 0, z);
+
+            const ghostMesh = new Mesh(ghostPlaneGeo, this.ghostPlaneMaterial);
+            game.currentScene.add(ghostMesh);
+            this.ghostPlanes[0] = [];
+            this.ghostPlanes[0][z] = ghostMesh;
+            // this.ghostPlanes.push(ghostMesh);
+        }
+        console.log(this.ghostPlanes);
+        console.log(this.ghostPlanes.length);
     }
 
     initPointsGeometry(geometry) {
         // const goePos = geometry.transform.position;
         const geoPoints = geometry.getAttribute("position").array;
-        console.log(geometry);
         // console.log(goePos);
 
         for (let x = this.minX; x <= this.maxX; x++) {
@@ -132,6 +166,12 @@ export default class Terrain {
     }
 
     switchMode(newMode) {
+        if (this.mode === "plane") {
+            this.ghostPlaneMaterial.visible = false;
+        }
+        if (this.mode === "vertex") {
+            this.terrainModifier.clearPoints();
+        }
         if (typeof newMode === "undefined") {
             // nextmode
             const currentMode = this.mode;
@@ -148,9 +188,15 @@ export default class Terrain {
     }
 
     updatePlane() {
-        // const newPlane = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
-        // this.plane.push(newPlane);
-        // console.log("updatePlane");
+        this.ghostPlaneMaterial.visible = true;
+        const mousePos = game.input.getMousePosition();
+        this.raycaster.setFromCamera(mousePos, this.camera);
+
+        const intersect = new THREE.Vector3();
+        this.raycaster.ray.intersectPlane(this.infinitPlane, intersect);
+        const centerToPlane = new Vector3(0);
+        centerToPlane.x = Math.floor((intersect.x + this.side / 2) / this.size);
+        // console.log(intersect);
     }
 
     updateTerrainMaterial() {
@@ -166,6 +212,9 @@ export default class Terrain {
             return;
         }
 
+        if (this.input.wasKeyJustPressed("Tab")) {
+            this.switchMode();
+        }
         // const mousePos = game.input.getMousePosition();
         // this.raycaster.setFromCamera(mousePos, this.camera);
         switch (this.mode) {
@@ -185,9 +234,6 @@ export default class Terrain {
             default: {
                 this.terrainModifier.update();
             }
-        }
-        if (this.input.wasKeyJustPressed("Tab")) {
-            this.switchMode();
         }
     }
 }
