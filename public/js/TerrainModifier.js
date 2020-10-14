@@ -167,6 +167,62 @@ export default class TerrainModifier {
                 return;
             }
 
+            // average of near points (8 points)
+            const allGeometries = [];
+            for (const point of pointsInBrush) {
+                if (typeof this.points[point.x + 1][point.z + 1] === "undefined" ||
+                typeof this.points[point.x + 1][point.z - 1] === "undefined" ||
+                typeof this.points[point.x - 1][point.z + 1] === "undefined" ||
+                typeof this.points[point.x - 1][point.z - 1] === "undefined") {
+                    console.log("outer of limite map -> skiped point !");
+                    continue;
+                }
+
+                const { index, object: geometry, y: pointY } = this.points[point.x][point.z];
+                const nearPoints = [
+                    this.points[point.x + 1][point.z].y,
+                    this.points[point.x - 1][point.z].y,
+                    this.points[point.x][point.z + 1].y,
+                    this.points[point.x][point.z - 1].y,
+                    this.points[point.x + 1][point.z - 1].y,
+                    this.points[point.x - 1][point.z + 1].y,
+                    this.points[point.x + 1][point.z + 1].y,
+                    this.points[point.x - 1][point.z - 1].y,
+                    pointY
+                ];
+
+                const avg = nearPoints.reduce((prev, curr) => prev + curr, 0) / nearPoints.length;
+
+                const diff = pointY - avg;
+                const newPosY = this.brushSmoothness * -diff;
+                geometry.attributes.position.array[index] += newPosY;
+                this.points[point.x][point.z].y += newPosY;
+
+                if (allGeometries.length === 0) {
+                    allGeometries.push(geometry);
+                    continue;
+                }
+                for (const { uuid } of allGeometries) {
+                    if (geometry.uuid !== uuid) {
+                        allGeometries.push(geometry);
+                    }
+                }
+            }
+
+            for (const geometry of allGeometries) {
+                geometry.attributes.position.needsUpdate = true;
+            }
+        }
+    }
+
+    flattenSmooth() {
+        const { pointsInBrush = [] } = this.getPointsInBrush();
+        if (game.input.isMouseButtonDown(0)) {
+            if (game.input.isKeyDown("ControlLeft")) {
+                return;
+            }
+
+            // average of all points
             let total = 0;
             for (const point of pointsInBrush) {
                 total += this.points[point.x][point.z].y;
