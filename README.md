@@ -29,8 +29,8 @@ Tab to change Mode (Edit vertex/Edit planes/Edit texture)
 > Only vertex editing mode work
 
 
-When in vertex editing mode:  
-1/2/3 above AZE on keybord  
-1: Raise = Left Mouse Click / Lower = Right Mouse Click  
-2: Flatten = Left Mouse Click  
+When in vertex editing mode:
+1/2/3 above AZE on keybord
+1: Raise = Left Mouse Click / Lower = Right Mouse Click
+2: Flatten = Left Mouse Click
 3: Smooth = Left Mouse Click

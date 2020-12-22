@@ -12,9 +12,12 @@ const {
 } = THREE;
 
 export default class TerrainModifier {
-    constructor(camera, meshs, points) {
+    constructor(terrain) {
+        const { camera, mesh, points } = terrain;
+        this.terrain = terrain;
+
         this.camera = camera;
-        this.meshs = meshs;
+        this.meshs = mesh;
         this.points = points;
 
         this.currentMode = [...TerrainModifier.BRUSH_EDIT_MODE][0];
@@ -121,6 +124,8 @@ export default class TerrainModifier {
                 return;
             }
             const brushSizeSq = this.brush.size * this.brush.size;
+
+            const allGeometries = [];
             for (const point of pointsInBrush) {
                 const distance = Math.pow(brushPoint.x - point.x, 2) + Math.pow(brushPoint.z - point.z, 2);
 
@@ -137,8 +142,27 @@ export default class TerrainModifier {
                 this.points[point.x][point.z].y += newPosY;
 
                 // try to see if we can update geometry if we switch for multiple plain
-                geometry.attributes.position.needsUpdate = true;
+                // geometry.attributes.position.needsUpdate = true;
+                // geometry.attributes.normal.needsUpdate = true;
+
+                if (allGeometries.length === 0) {
+                    allGeometries.push(geometry);
+                    continue;
+                }
+                for (const { uuid } of allGeometries) {
+                    if (geometry.uuid !== uuid) {
+                        allGeometries.push(geometry);
+                    }
+                }
             }
+
+            for (const geometry of allGeometries) {
+                geometry.attributes.position.needsUpdate = true;
+                geometry.attributes.normal.needsUpdate = true;
+                geometry.computeVertexNormals();
+            }
+
+            // geometry.computeVertexNormals();
         }
     }
 
@@ -149,14 +173,33 @@ export default class TerrainModifier {
                 return;
             }
 
+            const allGeometries = [];
             for (const point of pointsInBrush) {
                 const { index, object: geometry } = this.points[point.x][point.z];
                 geometry.attributes.position.array[index] = brushPoint.y;
                 this.points[point.x][point.z].y = brushPoint.y;
 
                 // try to see if we can update geometry if we switch for multiple plain
-                geometry.attributes.position.needsUpdate = true;
+                // geometry.attributes.position.needsUpdate = true;
+                // geometry.attributes.normal.needsUpdate = true;
+
+                if (allGeometries.length === 0) {
+                    allGeometries.push(geometry);
+                    continue;
+                }
+                for (const { uuid } of allGeometries) {
+                    if (geometry.uuid !== uuid) {
+                        allGeometries.push(geometry);
+                    }
+                }
             }
+
+            for (const geometry of allGeometries) {
+                geometry.attributes.position.needsUpdate = true;
+                geometry.attributes.normal.needsUpdate = true;
+                geometry.computeVertexNormals();
+            }
+            // geometry.computeVertexNormals();
         }
     }
 
@@ -170,11 +213,13 @@ export default class TerrainModifier {
             // average of near points (8 points)
             const allGeometries = [];
             for (const point of pointsInBrush) {
-                if (typeof this.points[point.x + 1][point.z + 1] === "undefined" ||
+                if (typeof this.points[point.x + 1] === "undefined" ||
+                typeof this.points[point.x - 1] === "undefined" ||
                 typeof this.points[point.x + 1][point.z - 1] === "undefined" ||
-                typeof this.points[point.x - 1][point.z + 1] === "undefined" ||
-                typeof this.points[point.x - 1][point.z - 1] === "undefined") {
-                    console.log("outer of limite map -> skiped point !");
+                typeof this.points[point.x + 1][point.z + 1] === "undefined" ||
+                typeof this.points[point.x - 1][point.z - 1] === "undefined" ||
+                typeof this.points[point.x - 1][point.z + 1] === "undefined") {
+                    // console.log("outer of limite map -> skiped point !");
                     continue;
                 }
 
@@ -211,6 +256,8 @@ export default class TerrainModifier {
 
             for (const geometry of allGeometries) {
                 geometry.attributes.position.needsUpdate = true;
+                geometry.attributes.normal.needsUpdate = true;
+                geometry.computeVertexNormals();
             }
         }
     }
@@ -242,6 +289,8 @@ export default class TerrainModifier {
                 this.points[point.x][point.z].y += newPosY;
 
                 geometry.attributes.position.needsUpdate = true;
+                geometry.attributes.normal.needsUpdate = true;
+                geometry.computeVertexNormals();
             }
         }
     }
