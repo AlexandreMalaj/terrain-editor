@@ -1,5 +1,7 @@
 /* eslint-disable max-classes-per-file, no-empty-function, class-methods-use-this, max-depth */
 
+import * as THREE from "three";
+import rockURL from "../materials/rock.jpg";
 import TerrainModifier from "./TerrainModifier.js";
 
 const {
@@ -82,7 +84,7 @@ export default class Terrain {
             side: THREE.DoubleSide
         });
 
-        const rockTexture = new THREE.TextureLoader().load("../materials/rock.jpg");
+        const rockTexture = new THREE.TextureLoader().load(rockURL);
         console.log(rockTexture);
 
         rockTexture.wrapS = THREE.RepeatWrapping;

@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import Easing from "./class/Easing.js";
 import Brush from "./Brush.js";
 
@@ -96,7 +97,7 @@ export default class TerrainModifier {
                 }
             }
             const vertices = new Float32Array(pointsArray);
-            this.pointGeometry.addAttribute("position", new BufferAttribute(vertices, 3));
+            this.pointGeometry.setAttribute("position", new BufferAttribute(vertices, 3));
 
             return {
                 brushPoint: point,
@@ -105,7 +106,7 @@ export default class TerrainModifier {
         }
 
         const vertices = new Float32Array([]);
-        this.pointGeometry.addAttribute("position", new BufferAttribute(vertices, 3));
+        this.pointGeometry.setAttribute("position", new BufferAttribute(vertices, 3));
 
         return {};
     }
@@ -298,7 +299,7 @@ export default class TerrainModifier {
     clearPoints() {
         const vertices = new Float32Array([]);
         const buffer = new BufferAttribute(vertices, 3);
-        this.pointGeometry.addAttribute("position", buffer);
+        this.pointGeometry.setAttribute("position", buffer);
     }
 
     update() {
