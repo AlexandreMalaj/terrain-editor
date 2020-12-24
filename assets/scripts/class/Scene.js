@@ -1,5 +1,5 @@
 // Require Third-party Dependencies
-// import THREE from "three";
+import * as THREE from "three";
 
 // Require Internal Dependencies
 // import Actor = require("./Actor");

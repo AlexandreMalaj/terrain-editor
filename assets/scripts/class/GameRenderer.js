@@ -1,8 +1,10 @@
+/* eslint-disable no-param-reassign */
+
 // Require Node.js Dependencies
 import EventEmitter from "./EventEmitter.js";
 
 // Require Third-party Dependencies
-// import THREE from "three";
+import * as THREE from "three";
 
 // Require Internal Dependencies
 import Input from "./Input.js";

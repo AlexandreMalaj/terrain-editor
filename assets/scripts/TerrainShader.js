@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 class TerrainShader {
     constructor() {
         const VERTEX_SHADER = `
