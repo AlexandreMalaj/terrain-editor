@@ -29,7 +29,7 @@ export default class TerrainModifier {
         this.brushSmoothness = 0.03;
 
         this.pointGeometry = new BufferGeometry();
-        this.pointMaterial = new PointsMaterial({ color: 0xff0000, size: 0.5 });
+        this.pointMaterial = new PointsMaterial({ color: 0xff0000, size: 0.5, side: THREE.DoubleSide });
         this.pointMesh = new Points(this.pointGeometry, this.pointMaterial);
         game.currentScene.add(this.pointMesh);
     }

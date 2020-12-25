@@ -2,6 +2,9 @@
 
 import * as THREE from "three";
 import rockURL from "../materials/rock.jpg";
+import grass from "../materials/grass.jpg";
+import cobble from "../materials/cobble.png";
+import crackedDirt from "../materials/crackedDirt.jpg";
 import TerrainModifier from "./TerrainModifier.js";
 
 const {
@@ -84,7 +87,7 @@ export default class Terrain {
             side: THREE.DoubleSide
         });
 
-        const rockTexture = new THREE.TextureLoader().load(rockURL);
+        const rockTexture = new THREE.TextureLoader().load(crackedDirt);
         console.log(rockTexture);
 
         rockTexture.wrapS = THREE.RepeatWrapping;
@@ -167,7 +170,7 @@ export default class Terrain {
         this.mesh = new Mesh(geometry, shaderMaterial);
         const wireframeMesh = new Mesh(geometry, this.wireframeMaterial);
         // this.helperNormal = new VertexNormalsHelper(this.mesh, 2, 0x00ff00, 1);
-        game.currentScene.add(this.helperNormal);
+        // game.currentScene.add(this.helperNormal);
         game.currentScene.add(this.mesh);
         // game.currentScene.add(wireframeMesh);
 

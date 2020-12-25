@@ -25,12 +25,7 @@ export default class FreeFlyCamera extends EventEmitter {
         this.camera = camera;
 
         this.movementSpeed = this.keys.speed;
-        this.rollSpeed = 0.5;
-
-        this.dragToLook = false;
-        this.autoForward = false;
-
-        this.mouseButtonDown = false;
+        this.rollSpeed = 1;
 
         this.lockMouse = false;
     }
@@ -66,17 +61,14 @@ export default class FreeFlyCamera extends EventEmitter {
 
     rotate() {
         const mouseDelta = this.input.getMouseDelta();
-        this.camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), -mouseDelta.x * this.rollSpeed * game.camera.aspect);
+        const euler = new THREE.Euler(0, 0, 0, "YXZ");
 
-        this.camera.rotateX(mouseDelta.y * this.rollSpeed);
+        euler.setFromQuaternion(this.camera.quaternion);
+        euler.y -= mouseDelta.x * this.rollSpeed;
+        euler.x += mouseDelta.y * this.rollSpeed;
+        euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
 
-        // improve this part
-        // const MAX_ROTATION = 0.98;
-        // const rotationX = this.camera.getWorldDirection(new THREE.Vector3()).z;
-        // console.log(rotationX);
-        // if (rotationX <= -MAX_ROTATION || rotationX >= MAX_ROTATION) {
-        //     this.camera.rotateX(-mouseDelta.y * this.rollSpeed);
-        // }
+        this.camera.quaternion.setFromEuler(euler);
     }
 
     update() {
