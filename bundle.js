@@ -1,15 +1,12 @@
 /* eslint-disable no-sync */
 
 // Import Node.js Dependencies
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
+const repl = require("repl");
+const path = require("path");
+const fs = require("fs");
 
 // Import Third-party Dependencies
-import esbuild from "esbuild";
-
-// Node.js CJS constants
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const esbuild = require("esbuild");
 
 // CONSTANTS
 const kAssetsDir = path.join(__dirname, "assets");
@@ -24,6 +21,10 @@ async function main() {
             ".jpg": "file",
             ".png": "file"
         },
+        external: [
+            // all nodeJS Module
+            ...new Set(repl.builtinModules)
+        ],
         bundle: true,
         outdir: kOutDir
     });

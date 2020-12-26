@@ -1,4 +1,5 @@
 import * as THREE from "three";
+// const THREE = require("three");
 
 import FreeFlyCamera from "./class/FreeflyCamera.js";
 import GameRenderer from "./class/GameRenderer.js";
@@ -22,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     game.currentScene.add(axesHelper);
 
     const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
-    const terrain = new Terrain(128, camera);
+    const terrain = new Terrain(256, camera);
 
 
     camera.position.z = 50;

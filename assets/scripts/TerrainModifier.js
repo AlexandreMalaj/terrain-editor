@@ -159,7 +159,6 @@ export default class TerrainModifier {
 
             for (const geometry of allGeometries) {
                 geometry.attributes.position.needsUpdate = true;
-                geometry.attributes.normal.needsUpdate = true;
                 geometry.computeVertexNormals();
             }
 
@@ -197,7 +196,6 @@ export default class TerrainModifier {
 
             for (const geometry of allGeometries) {
                 geometry.attributes.position.needsUpdate = true;
-                geometry.attributes.normal.needsUpdate = true;
                 geometry.computeVertexNormals();
             }
             // geometry.computeVertexNormals();
@@ -257,7 +255,6 @@ export default class TerrainModifier {
 
             for (const geometry of allGeometries) {
                 geometry.attributes.position.needsUpdate = true;
-                geometry.attributes.normal.needsUpdate = true;
                 geometry.computeVertexNormals();
             }
         }

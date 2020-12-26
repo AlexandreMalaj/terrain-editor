@@ -60,6 +60,7 @@ export default function terrainShader(uniforms = Object.create(null)) {
 
         void main() {
             vec3 blending = TriplanarPowBlending(vNormal, 12.);
+            // vec3 blending = triplanarAsymmetricBlending(vNormal);
             vec4 xaxis = texture2D(map, vPosition.yz / vScale);
             vec4 yaxis = texture2D(map, vPosition.xz / vScale);
             vec4 zaxis = texture2D(map, vPosition.xy / vScale);

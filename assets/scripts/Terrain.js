@@ -1,13 +1,6 @@
 /* eslint-disable max-classes-per-file, no-empty-function, class-methods-use-this, max-depth */
 
 import * as THREE from "three";
-import rockURL from "../materials/rock.jpg";
-import grass from "../materials/grass.jpg";
-import cobble from "../materials/cobble.png";
-import crackedDirt from "../materials/crackedDirt.jpg";
-import TerrainModifier from "./TerrainModifier.js";
-import terrainShader from "./TerrainShader.js";
-
 const {
     Vector3,
     Raycaster,
@@ -15,7 +8,6 @@ const {
     MeshBasicMaterial,
     MeshPhongMaterial,
     PointsMaterial,
-    ShaderMaterial,
     Mesh,
     VertexNormalsHelper,
 
@@ -24,8 +16,21 @@ const {
     Plane
 } = THREE;
 
+// import rockURL from "../materials/rock.jpg";
+import grass from "../materials/grass.jpg";
+// import cobble from "../materials/cobble.png";
+// import crackedDirt from "../materials/crackedDirt.jpg";
+import TerrainModifier from "./TerrainModifier.js";
+import terrainShader from "./TerrainShader.js";
+
+import { join } from "path";
+import fs from "fs";
+const { readdir } = fs.promises;
+
+
+
 export default class Terrain {
-    constructor(size, camera, options = Object.create(null)) {
+    constructor(size, camera) {
         this.initialized = false;
 
         this.input = game.input;
@@ -41,43 +46,44 @@ export default class Terrain {
 
         // this.brush = new Brush(10);
         this.camera = camera;
-        // this.mode = [...Terrain.MODE][0];
-        this.mode = "terrainModifier";
-        const {
-            material = {
-                color: 0x000000,
-                wireframe: true
-            }
-        } = options;
+        this.mode = [...Terrain.MODE][0];
+        // this.mode = "terrainModifier";
 
-
-        this.points = [];
-        this.initTerrainGeometry(material);
-        console.log("this.mesh:");
-        console.log(this.mesh);
-        this.terrainModifier = new TerrainModifier(this);
-        // console.log(this.points);
-        // this.shaderMaterial = new ShaderMaterial({
-        //     uniforms: {
-        //         time: { value: 1.0 },
-        //         resolution: { value: new THREE.Vector2() }
-        //     },
-        //     vertexShader: VERTEX_SHADER,
-        //     fragmentShader: FRAGMENT_SHADER
-        // });
-
-        // console.log(this.points);
+        this.init().catch(console.error);
 
         // this.materials = [basicMaterial];
+    }
+
+    async init() {
+        this.textures = [];
+        await this.loadTerrainTexture("./assets/materials");
+
+        this.points = [];
+        this.initTerrainGeometry();
+
+        this.terrainModifier = new TerrainModifier(this);
 
         this.infinitPlane = new Plane(new Vector3(0, 1, 0));
         // game.currentScene.add(this.infinitPlane);
-
         this.raycaster = new Raycaster();
         this.initialized = true;
     }
 
-    initTerrainGeometry(terrainMeterial) {
+    async loadTerrainTexture(folder) {
+        const files = await readdir(folder);
+
+        for (const file of files) {
+            // console.log(file);
+            const texture = new THREE.TextureLoader().load(join("..", folder, file));
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            this.textures.push(texture);
+        }
+
+        console.log(this.textures);
+    }
+
+    initTerrainGeometry() {
         const geometry = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
         // console.log(geometry);
         geometry.rotateX(-Math.PI / 2);
@@ -91,21 +97,17 @@ export default class Terrain {
         // game.currentScene.add(pointLightHelper);
 
         // soft white light
-        const ambientLight = new THREE.AmbientLight(0x00ff00);
-        game.currentScene.add(ambientLight);
+        // const ambientLight = new THREE.AmbientLight(0x00ff00);
+        // game.currentScene.add(ambientLight);
 
-
-        this.wireframeMaterial = new MeshBasicMaterial(terrainMeterial);
+        this.wireframeMaterial = new MeshBasicMaterial({
+            color: 0x000000,
+            wireframe: true
+        });
         const basicMaterial = new MeshBasicMaterial({
             // color: 0xffff00,
             side: THREE.DoubleSide
         });
-
-        const terrainTexture = new THREE.TextureLoader().load(grass);
-        // console.log(rockTexture);
-
-        terrainTexture.wrapS = THREE.RepeatWrapping;
-        terrainTexture.wrapT = THREE.RepeatWrapping;
 
         // const uniforms = THREE.UniformsUtils.merge([
         //     THREE.UniformsLib.ambient,
@@ -119,26 +121,17 @@ export default class Terrain {
         // console.log(uniforms);
 
         const uniforms = {
-            map: { type: "t", value: terrainTexture },
+            map: { type: "t", value: this.textures[3] },
             scale: { type: "f", value: 10 }
         };
         const shaderMaterial = terrainShader(uniforms);
-        // const shaderMaterial = new THREE.ShaderMaterial({
-        //     uniforms: {
-        //         map: { type: "t", value: rockTexture },
-        //         scale: { type: "f", value: 10 }
-        //     },
-        //     // lights: true,
-        //     vertexShader: vShader,
-        //     fragmentShader: fShader
-        // });
 
         this.mesh = new Mesh(geometry, shaderMaterial);
         const wireframeMesh = new Mesh(geometry, this.wireframeMaterial);
         // this.helperNormal = new VertexNormalsHelper(this.mesh, 2, 0x00ff00, 1);
         // game.currentScene.add(this.helperNormal);
         game.currentScene.add(this.mesh);
-        // game.currentScene.add(wireframeMesh);
+        game.currentScene.add(wireframeMesh);
 
         this.planes = [];
         this.planes[0] = [];
@@ -153,7 +146,7 @@ export default class Terrain {
     }
 
     initGhostPlane(planeMesh) {
-        console.log(planeMesh);
+        // console.log(planeMesh);
         const { position } = planeMesh;
 
         this.ghostPlaneMaterial = new MeshBasicMaterial({
@@ -185,8 +178,8 @@ export default class Terrain {
             this.ghostPlanes[0][z] = ghostMesh;
             // this.ghostPlanes.push(ghostMesh);
         }
-        console.log(this.ghostPlanes);
-        console.log(this.ghostPlanes.length);
+        // console.log(this.ghostPlanes);
+        // console.log(this.ghostPlanes.length);
     }
 
     initPointsGeometry(geometry) {
@@ -202,6 +195,7 @@ export default class Terrain {
                     z,
                     y: 0,
                     index: -1,
+                    textureIndex: 0,
                     object: null
                 };
             }
@@ -212,11 +206,10 @@ export default class Terrain {
                 y: geoPoints[i + 1],
                 z: geoPoints[i + 2]
             };
-            // console.log(pos);
+
             const obj = this.points[pos.x][pos.z];
             obj.index = i + 1;
             obj.object = geometry;
-            // console.log(obj.index);
         }
     }
 
