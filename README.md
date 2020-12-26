@@ -15,22 +15,21 @@ $ npm i
 $ npm start
 ```
 
-
 ## Movement
 
-ZQSD for Moving Camera  
-Shift/Space for Up/Down Camera  
-Middle Mouse button to rotate Camera  
+### Camera
+`ZQSD` to move Camera  
+`Shift/Space` for Up/Down Camera  
+`Middle Mouse Button` to rotate Camera
 
-> Care about rotation on X axis (they is no limit currently)
-
-
-Tab to change Mode (Edit vertex/Edit planes/Edit texture)  
+### Editing mode
+`Tab` to change Editing Mode (vertex/planes/textures)  
 > Only vertex editing mode work
 
-
+### Vertex editing
 When in vertex editing mode:
-1/2/3 above AZE on keybord
-1: Raise = Left Mouse Click / Lower = Right Mouse Click
-2: Flatten = Left Mouse Click
+
+`1/2/3` above AZE on keybord:  
+1: Raise = Left Mouse Click / Lower = Right Mouse Click  
+2: Flatten = Left Mouse Click (flatten all point from the heigh where you click)
 3: Smooth = Left Mouse Click

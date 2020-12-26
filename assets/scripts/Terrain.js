@@ -6,6 +6,7 @@ import grass from "../materials/grass.jpg";
 import cobble from "../materials/cobble.png";
 import crackedDirt from "../materials/crackedDirt.jpg";
 import TerrainModifier from "./TerrainModifier.js";
+import terrainShader from "./TerrainShader.js";
 
 const {
     Vector3,
@@ -81,91 +82,56 @@ export default class Terrain {
         // console.log(geometry);
         geometry.rotateX(-Math.PI / 2);
 
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(0, 10, 0);
+        game.currentScene.add(pointLight);
+
+        // const sphereSize = 1;
+        // const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
+        // game.currentScene.add(pointLightHelper);
+
+        // soft white light
+        const ambientLight = new THREE.AmbientLight(0x00ff00);
+        game.currentScene.add(ambientLight);
+
+
         this.wireframeMaterial = new MeshBasicMaterial(terrainMeterial);
         const basicMaterial = new MeshBasicMaterial({
             // color: 0xffff00,
             side: THREE.DoubleSide
         });
 
-        const rockTexture = new THREE.TextureLoader().load(crackedDirt);
-        console.log(rockTexture);
+        const terrainTexture = new THREE.TextureLoader().load(grass);
+        // console.log(rockTexture);
 
-        rockTexture.wrapS = THREE.RepeatWrapping;
-        rockTexture.wrapT = THREE.RepeatWrapping;
+        terrainTexture.wrapS = THREE.RepeatWrapping;
+        terrainTexture.wrapT = THREE.RepeatWrapping;
 
-        const vShader = `
-            uniform float scale;
+        // const uniforms = THREE.UniformsUtils.merge([
+        //     THREE.UniformsLib.ambient,
+        //     THREE.UniformsLib.lights,
+        //     {
+        //         map: { type: "t", value: rockTexture },
+        //         scale: { type: "f", value: 10 }
+        //     }
+        // ]);
+        // console.log(THREE.UniformsLib);
+        // console.log(uniforms);
 
-            varying vec2 vertexUv;
-            varying vec3 vNormal;
-            varying vec3 vPos;
-            varying float vScale;
-
-            void main() {
-                vertexUv = uv * scale;
-                vScale = scale;
-                vPos = position;
-                vNormal = normal;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `;
-        const fShader = `
-            uniform sampler2D map;
-            uniform mat4 modelMatrix;
-
-            varying vec2 vertexUv;
-            varying vec3 vPos;
-            varying vec3 vNormal;
-            varying float vScale;
-
-            float clampAbs(float a, float min, float max) {
-                if(min > max) {
-                    return 0.;
-                }
-                float diff = min - max;
-                return (clamp(a, min, max) + min) / diff;
-            }
-
-            vec3 getTriPlanarBlend(vec3 _wNorm){
-                // in wNorm is the world-space normal of the fragment
-                vec3 blending = abs( _wNorm );
-                blending = normalize(max(blending, 0.00001)); // Force weights to sum to 1.0
-                float b = (blending.x + blending.y + blending.z);
-                blending /= vec3(b, b, b);
-                return blending;
-            }
-
-            void main() {
-                vec3 worldPosition = (modelMatrix * vec4(vPos, 1)).xyz;
-                // vec3 worldSpaceNormal = (modelMatrix * vec4(vNormal, 0.0)).xyz
-
-                vec3 blending = getTriPlanarBlend(vNormal);
-                vec3 xaxis = texture2D(map, worldPosition.yz / vScale).rgb;
-                vec3 yaxis = texture2D(map, worldPosition.xz / vScale).rgb;
-                vec3 zaxis = texture2D(map, worldPosition.xy / vScale).rgb;
-
-                // vec3 weights = abs(worldSpaceNormal.xyz);
-                // weights = weights / (weights.x + weights.y + weights.z);
-
-                // vec4 normalTex = xaxis * weights.x + yaxis * weights.y + zaxis * weights.z;
-                vec3 normalTex = xaxis * blending.x + yaxis * blending.y + zaxis * blending.z;
-
-                // gl_FragColor = xaxis;
-                // gl_FragColor = normalTex;
-                gl_FragColor = vec4(normalTex, 1.);
-                // gl_FragColor = texture2D(map, vertexUv.xy);
-                // gl_FragColor = vec4(vertexUv, clampAbs(vPos.y, -5., 10.) , 0.);
-            }
-        `;
-
-        const shaderMaterial = new THREE.ShaderMaterial({
-            uniforms: {
-                map: { type: "t", value: rockTexture },
-                scale: { type: "f", value: 10 }
-            },
-            vertexShader: vShader,
-            fragmentShader: fShader
-        });
+        const uniforms = {
+            map: { type: "t", value: terrainTexture },
+            scale: { type: "f", value: 10 }
+        };
+        const shaderMaterial = terrainShader(uniforms);
+        // const shaderMaterial = new THREE.ShaderMaterial({
+        //     uniforms: {
+        //         map: { type: "t", value: rockTexture },
+        //         scale: { type: "f", value: 10 }
+        //     },
+        //     // lights: true,
+        //     vertexShader: vShader,
+        //     fragmentShader: fShader
+        // });
 
         this.mesh = new Mesh(geometry, shaderMaterial);
         const wireframeMesh = new Mesh(geometry, this.wireframeMaterial);
@@ -173,15 +139,6 @@ export default class Terrain {
         // game.currentScene.add(this.helperNormal);
         game.currentScene.add(this.mesh);
         // game.currentScene.add(wireframeMesh);
-
-
-        const pointLight = new THREE.PointLight(0xff0000, 1, 100);
-        pointLight.position.set(-1, 2, -1);
-        game.currentScene.add(pointLight);
-
-        // // soft white light
-        // const ambientLight = new THREE.AmbientLight(0x404040);
-        // game.currentScene.add(ambientLight);
 
         this.planes = [];
         this.planes[0] = [];
@@ -201,6 +158,7 @@ export default class Terrain {
 
         this.ghostPlaneMaterial = new MeshBasicMaterial({
             color: 0x00ff00,
+            wireframe: true,
             side: THREE.DoubleSide,
             visible: false
         });
@@ -217,7 +175,7 @@ export default class Terrain {
             // this.ghostPlanes.push(ghostMesh);
         }
         for (let z = position.z - this.size; z <= position.z + this.size; z += this.size * 2) {
-            const ghostPlaneGeo = new PlaneBufferGeometry(this.size, this.size, 1, 1);
+            const ghostPlaneGeo = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
             ghostPlaneGeo.rotateX(Math.PI / 2);
             ghostPlaneGeo.translate(0, 0, z);
 
@@ -280,8 +238,8 @@ export default class Terrain {
         if (typeof newMode === "string" && Terrain.MODE.has(newMode)) {
             this.mode = newMode;
         }
-        const terrainModeElem = document.querySelector("#terrainMode > span");
-        terrainModeElem.textContent = this.mode;
+        // const terrainModeElem = document.querySelector("#terrainMode > span");
+        // terrainModeElem.textContent = this.mode;
     }
 
     updatePlane() {
@@ -311,7 +269,7 @@ export default class Terrain {
         }
 
         if (this.input.wasKeyJustPressed("Tab")) {
-            // this.switchMode();
+            this.switchMode();
         }
         // const mousePos = game.input.getMousePosition();
         // this.raycaster.setFromCamera(mousePos, this.camera);
