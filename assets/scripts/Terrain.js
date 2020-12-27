@@ -131,7 +131,7 @@ export default class Terrain {
         // this.helperNormal = new VertexNormalsHelper(this.mesh, 2, 0x00ff00, 1);
         // game.currentScene.add(this.helperNormal);
         game.currentScene.add(this.mesh);
-        game.currentScene.add(wireframeMesh);
+        // game.currentScene.add(wireframeMesh);
 
         this.planes = [];
         this.planes[0] = [];

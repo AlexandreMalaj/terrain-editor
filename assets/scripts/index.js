@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     game.currentScene.add(axesHelper);
 
     const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
-    const terrain = new Terrain(256, camera);
+    const terrain = new Terrain(128, camera);
 
 
     camera.position.z = 50;
