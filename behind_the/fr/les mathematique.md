@@ -59,9 +59,10 @@ Pour notre vecteur `(x:4 ; y:5)` représenté en rouge, nous pouvons le créer g
 - `(x:4 ; y:0)` en vert
 - `(x:0 ; y:5)` en bleu
 
-Cela nous forme un beau triangle rectangle et nous allons pouvoir calculer la longueur de notre vecteur rouge !
+Cela nous forme un beau triangle rectangle et nous allons pouvoir calculer la longueur de notre vecteur rouge !  
 Théoreme de Pythagore : `u² = v² + w²`  
-donc: ![Pythagore reciproque](https://i.ibb.co/jbQCmNN/image.png)
+donc:  
+![Pythagore reciproque](https://i.ibb.co/jbQCmNN/image.png)
 
 ```js
 // Retourne la longueur d'un vecteur 2D
@@ -70,7 +71,10 @@ function getVector2DLength(vector) {
     return Math.sqrt(x*x + y*y);
 }
 ```
-La longueur de notre vecteur `(x:4 ; y:5)` rouge: ![Pythagore reciproque](https://i.ibb.co/XkB7J8J/image.png)
+La longueur de notre vecteur `(x:4 ; y:5)` rouge:  
+![Pythagore reciproque](https://i.ibb.co/XkB7J8J/image.png)
+
+Maintenant que nous avons la longueur de notre vecteur nous allons pouvoir le normaliser en divisant chaque coordonnée par sa longueur:
 
 ```js
 function normalize(vector) {
@@ -85,10 +89,25 @@ function normalize(vector) {
 ```
 > Il est à noté que nous voulons toujours avoir une valeur positive sur la longueur d'un vecteur: certain serait donc tenté de rajouter un Math.abs(length). Mais souvenez vous que le résultat d'un nombre négatif multiplié par lui même est toujours positif !
 
-Le vecteur normalisé est représenté par `u'` en noir sur cette dernière image.
+Le vecteur normalisé est représenté par `u'` en noir sur cette dernière image.  
 Le cercle à un rayon de 1 ce qui permet de vérifié géometriquement que notre vecteur normalisé `u'` fait bien 1 de longueur !
 ![Représentation générale](https://i.ibb.co/vJwVS94/image.png)
 
-### Dot product (produit vectoriel)
+### Dot product (Produit scalaire)
 
-### Cross product
+Le produit scalaire est très souvent utilisé pour connaitre la différence angulaire entre 2 vecteurs  
+Il est possible d'avoir cette différence en degrée mais il est très que cela soit fait:
+- d'une part parce qu'il est rare que les calcules soient fait en degrée
+- et d'une autre part parce que les calculs se complexifi
+
+> Si nous normalisons les vecteurs avant de les envoyer dans la fonction `dot()`, nous allons pouvoir avoir des résultats entre -1 et 1.  
+> ou 1 signifie que les vecteurs pointe dans la meme direction  
+> ou 0 signifie que les vecteur sont perpendiculaire
+
+```js
+function dot(vector1, vector2) {
+    return vector1.x * vector2.x + vector1.y + vector2.y;
+}
+```
+
+### Cross product (Produit vectoriel)
