@@ -106,6 +106,7 @@ Il est possible d'avoir cette différence en degrée mais il est très que cela 
 > ou -1 signifie que les vecteurs pointe de manière opposés
 
 ```js
+// produit scalaire de 2 vecteur2D
 function dot(vector1, vector2) {
     return vector1.x * vector2.x + vector1.y * vector2.y;
 }
@@ -119,4 +120,16 @@ Pour plus d'information, n'hésité à regarder sur le net !
 
 > Il doit y avoir d'autre utilité et je rajouterai au fur et mesure que je découvrerai des choses !
 
-### Cross product (Produit vectoriel)
+### Cross product (Produit vectoriel) [WIP]
+
+Le produit scalaire peut servir à 2 choses a ma connaissance
+- Savoir si un vecteur est a gauche ou a droite d'un autre vecteur
+- Projeter un point sur une droite si l'on considère un vecteur comme une droite et l'autre comme un point
+
+```js
+// Produit vectoriel de 2 vecteur 2D
+// déterminant d'une matrice 2D ?
+function cross(vector1, vector2) {
+    return vector1.x * vector2.y - vector1.y * vector2.x;
+}
+```
