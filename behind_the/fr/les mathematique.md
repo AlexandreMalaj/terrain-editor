@@ -98,16 +98,25 @@ Le cercle à un rayon de 1 ce qui permet de vérifié géometriquement que notre
 Le produit scalaire est très souvent utilisé pour connaitre la différence angulaire entre 2 vecteurs  
 Il est possible d'avoir cette différence en degrée mais il est très que cela soit fait:
 - d'une part parce qu'il est rare que les calcules soient fait en degrée
-- et d'une autre part parce que les calculs se complexifi
+- et d'une autre part parce que les calcules se complexifies
 
 > Si nous normalisons les vecteurs avant de les envoyer dans la fonction `dot()`, nous allons pouvoir avoir des résultats entre -1 et 1.  
 > ou 1 signifie que les vecteurs pointe dans la meme direction  
-> ou 0 signifie que les vecteur sont perpendiculaire
+> ou 0 signifie que les vecteur sont perpendiculaire  
+> ou -1 signifie que les vecteurs pointe de manière opposés
 
 ```js
 function dot(vector1, vector2) {
-    return vector1.x * vector2.x + vector1.y + vector2.y;
+    return vector1.x * vector2.x - vector1.y * vector2.y;
 }
 ```
+
+Deux exemples  
+![Représentation générale](https://i.imgur.com/G2ZKuX2.gif)
+![Représentation générale](https://i.imgur.com/Le4bqVF.gif)
+
+Pour plus d'information, n'hésité à regarder sur le net !
+
+> Il doit y avoir d'autre utilité et je rajouterai au fur et mesure que je découvrerai des choses !
 
 ### Cross product (Produit vectoriel)
