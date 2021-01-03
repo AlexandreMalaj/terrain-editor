@@ -2,6 +2,7 @@
 
 import * as THREE from "three";
 const {
+    Uniform,
     Vector3,
     Raycaster,
 
@@ -26,7 +27,6 @@ import terrainShader from "./TerrainShader.js";
 import { join } from "path";
 import fs from "fs";
 const { readdir } = fs.promises;
-
 
 
 export default class Terrain {
@@ -122,7 +122,26 @@ export default class Terrain {
 
         const uniforms = {
             map: { type: "t", value: this.textures[3] },
-            scale: { type: "f", value: 10 }
+            scale: { type: "f", value: 10 },
+            phongMaterial: {
+                value: {
+                    position: new Vector3(0, 1, 0),
+
+                    ambientColor: new Vector3(0.5, 0.5, 0.5),
+                    diffuseColor: new Vector3(0.5, 0.5, 0.5),
+                    specularColor: new Vector3(1, 1, 1),
+                    ambientStrength: 0.3,
+                    specularStrength: 0.5,
+                    shininess: 256,
+
+                    constant: 0.5,
+                    linear: 0.5,
+                    quadratic: 0.5
+                }
+            }
+            // lightPos: new Uniform(new Vector3(0, 2, 0)),
+            // specularStrength: { type: "f", value: 0.5 },
+            // shininess: { type: "f", value: 32 }
         };
         const shaderMaterial = terrainShader(uniforms);
 
