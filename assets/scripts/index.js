@@ -3,6 +3,8 @@ import * as THREE from "three";
 
 import FreeFlyCamera from "./class/FreeflyCamera.js";
 import GameRenderer from "./class/GameRenderer.js";
+import TransformControlsManager from "./class/TransformControlsManager.js";
+import LightManager from "./class/LightManager.js";
 import Terrain from "./Terrain.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,6 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
     const terrain = new Terrain(128, camera);
 
+    const lightManager = new LightManager(game.currentScene);
+    const light = new THREE.PointLight();
+    const light2 = new THREE.PointLight();
+    const dirLight = new THREE.DirectionalLight();
+    lightManager.addLight(light);
+    lightManager.addLight(light2);
+    lightManager.addLight(dirLight);
+
+    console.log(lightManager.allLights);
+    console.log(LightManager.lightName);
 
     camera.position.z = 50;
     camera.position.y = 45;

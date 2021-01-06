@@ -2,6 +2,7 @@
 
 import * as THREE from "three";
 const {
+    TransformControls,
     Uniform,
     Vector3,
     Raycaster,
