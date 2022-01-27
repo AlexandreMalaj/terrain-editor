@@ -22,6 +22,6 @@
     "watch-cli": "^0.2.3"
   },
   "dependencies": {
-    "three": "^0.124.0"
+    "three": "^0.137.0"
   }
 }
