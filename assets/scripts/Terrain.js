@@ -50,9 +50,20 @@ export default class Terrain {
         this.mode = [...Terrain.MODE][0];
         // this.mode = "terrainModifier";
 
+        this.ghostPlaneMaterial = new MeshBasicMaterial({
+            color: 0x00ff00,
+            wireframe: true,
+            side: THREE.DoubleSide,
+            visible: false
+        });
+
         this.init().catch(console.error);
 
         // this.materials = [basicMaterial];
+
+        game.on("update", () => {
+            this.update();
+        });
     }
 
     async init() {
@@ -105,9 +116,17 @@ export default class Terrain {
             color: 0x000000,
             wireframe: true
         });
+
+        const blankCanvas = document.createElement("canvas").getContext("2d");
+        blankCanvas.canvas.width = this.size * 16;
+        blankCanvas.canvas.height = this.size * 16;
+        blankCanvas.fillStyle = "#FFF";
+        blankCanvas.fillRect(0, 0, blankCanvas.canvas.width, blankCanvas.canvas.height);
+
         const basicMaterial = new MeshBasicMaterial({
             // color: 0xffff00,
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            map: new THREE.CanvasTexture(blankCanvas.canvas)
         });
 
         // const uniforms = THREE.UniformsUtils.merge([
@@ -146,7 +165,7 @@ export default class Terrain {
         };
         const shaderMaterial = terrainShader(uniforms);
 
-        this.mesh = new Mesh(geometry, shaderMaterial);
+        this.mesh = new Mesh(geometry, basicMaterial);
         const wireframeMesh = new Mesh(geometry, this.wireframeMaterial);
         // this.helperNormal = new VertexNormalsHelper(this.mesh, 2, 0x00ff00, 1);
         // game.currentScene.add(this.helperNormal);
@@ -165,38 +184,28 @@ export default class Terrain {
         this.initPointsGeometry(geometry);
     }
 
+    createGhostPlane(translation) {
+        const { x, z } = translation;
+        const ghostPlaneGeo = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
+        ghostPlaneGeo.rotateX(Math.PI / 2);
+        ghostPlaneGeo.translate(x, 0, z);
+
+        const ghostMesh = new Mesh(ghostPlaneGeo, this.ghostPlaneMaterial);
+        game.currentScene.add(ghostMesh);
+        this.ghostPlanes[x] = [];
+        this.ghostPlanes[x][z] = ghostMesh;
+        // this.ghostPlanes.push(ghostMesh);
+    }
+
     initGhostPlane(planeMesh) {
         // console.log(planeMesh);
         const { position } = planeMesh;
 
-        this.ghostPlaneMaterial = new MeshBasicMaterial({
-            color: 0x00ff00,
-            wireframe: true,
-            side: THREE.DoubleSide,
-            visible: false
-        });
-
         for (let x = position.x - this.size; x <= position.x + this.size; x += this.size * 2) {
-            const ghostPlaneGeo = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
-            ghostPlaneGeo.rotateX(Math.PI / 2);
-            ghostPlaneGeo.translate(x, 0, 0);
-
-            const ghostMesh = new Mesh(ghostPlaneGeo, this.ghostPlaneMaterial);
-            game.currentScene.add(ghostMesh);
-            this.ghostPlanes[x] = [];
-            this.ghostPlanes[x][0] = ghostMesh;
-            // this.ghostPlanes.push(ghostMesh);
+            this.createGhostPlane(new Vector3(x, 0, 0));
         }
         for (let z = position.z - this.size; z <= position.z + this.size; z += this.size * 2) {
-            const ghostPlaneGeo = new PlaneBufferGeometry(this.size, this.size, this.size, this.size);
-            ghostPlaneGeo.rotateX(Math.PI / 2);
-            ghostPlaneGeo.translate(0, 0, z);
-
-            const ghostMesh = new Mesh(ghostPlaneGeo, this.ghostPlaneMaterial);
-            game.currentScene.add(ghostMesh);
-            this.ghostPlanes[0] = [];
-            this.ghostPlanes[0][z] = ghostMesh;
-            // this.ghostPlanes.push(ghostMesh);
+            this.createGhostPlane(new Vector3(0, 0, z));
         }
         // console.log(this.ghostPlanes);
         // console.log(this.ghostPlanes.length);

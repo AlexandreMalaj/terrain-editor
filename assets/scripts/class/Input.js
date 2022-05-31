@@ -236,32 +236,45 @@ export default class Input extends EventEmitter {
         document.removeEventListener("DOMMouseScroll", this.onMouseWheel);
         document.removeEventListener("mousewheel", this.onMouseWheel);
 
-        if ("onpointerlockchange" in document)
+        if ("onpointerlockchange" in document) {
             document.removeEventListener("pointerlockchange", this.onPointerLockChange, false);
-        else if ("onmozpointerlockchange" in document)
+        }
+        else if ("onmozpointerlockchange" in document) {
             document.removeEventListener("mozpointerlockchange", this.onPointerLockChange, false);
-        else if ("onwebkitpointerlockchange" in document)
+        }
+        else if ("onwebkitpointerlockchange" in document) {
             document.removeEventListener("webkitpointerlockchange", this.onPointerLockChange, false);
+        }
 
-        if ("onpointerlockerror" in document)
+        if ("onpointerlockerror" in document) {
             document.removeEventListener("pointerlockerror", this.onPointerLockError, false);
-        else if ("onmozpointerlockerror" in document)
+        }
+        else if ("onmozpointerlockerror" in document) {
             document.removeEventListener("mozpointerlockerror", this.onPointerLockError, false);
-        else if ("onwebkitpointerlockerror" in document)
+        }
+        else if ("onwebkitpointerlockerror" in document) {
             document.removeEventListener("webkitpointerlockerror", this.onPointerLockError, false);
+        }
 
-        if ("onfullscreenchange" in document)
+        if ("onfullscreenchange" in document) {
             document.removeEventListener("fullscreenchange", this.onFullscreenChange, false);
-        else if ("onmozfullscreenchange" in document)
+        }
+        else if ("onmozfullscreenchange" in document) {
             document.removeEventListener("mozfullscreenchange", this.onFullscreenChange, false);
-        else if ("onwebkitfullscreenchange" in document)
+        }
+        else if ("onwebkitfullscreenchange" in document) {
             document.removeEventListener("webkitfullscreenchange", this.onFullscreenChange, false);
+        }
 
-        if ("onfullscreenerror" in document) document.removeEventListener("fullscreenerror", this.onFullscreenError, false);
-        else if ("onmozfullscreenerror" in document)
+        if ("onfullscreenerror" in document) {
+            document.removeEventListener("fullscreenerror", this.onFullscreenError, false);
+        }
+        else if ("onmozfullscreenerror" in document) {
             document.removeEventListener("mozfullscreenerror", this.onFullscreenError, false);
-        else if ("onwebkitfullscreenerror" in document)
+        }
+        else if ("onwebkitfullscreenerror" in document) {
             document.removeEventListener("webkitfullscreenerror", this.onFullscreenError, false);
+        }
 
         this.canvas.removeEventListener("touchstart", this.onTouchStart);
         this.canvas.removeEventListener("touchend", this.onTouchEnd);
@@ -352,9 +365,15 @@ export default class Input extends EventEmitter {
             return;
         }
 
-        if (document.exitPointerLock) document.exitPointerLock();
-        else if (document.webkitExitPointerLock) document.webkitExitPointerLock();
-        else if (document.mozExitPointerLock) document.mozExitPointerLock();
+        if (document.exitPointerLock) {
+            document.exitPointerLock();
+        }
+        else if (document.webkitExitPointerLock) {
+            document.webkitExitPointerLock();
+        }
+        else if (document.mozExitPointerLock) {
+            document.mozExitPointerLock();
+        }
     }
 
     _isPointerLocked() {
@@ -403,9 +422,15 @@ export default class Input extends EventEmitter {
             return;
         }
 
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+        else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+        else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        }
     }
 
     isFullscreen() {
@@ -512,6 +537,7 @@ export default class Input extends EventEmitter {
         this.mouseButtons[event.button].doubleClicked = true;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     onContextMenu(event) {
         event.preventDefault();
     }
@@ -597,11 +623,11 @@ export default class Input extends EventEmitter {
         if (event.char !== null) {
             this.newTextEntered += event.char;
         }
-        else if (event.charCode !== 0) {
-            this.newTextEntered += String.fromCharCode(event.charCode);
+        else if (event.charCode === 0) {
+            this.newTextEntered += String.fromCharCode(event.keyCode);
         }
         else {
-            this.newTextEntered += String.fromCharCode(event.keyCode);
+            this.newTextEntered += String.fromCharCode(event.charCode);
         }
     }
 
@@ -794,6 +820,7 @@ export default class Input extends EventEmitter {
                         }
                         else {
                             // Check for auto-repeat deadline
+                            // eslint-disable-next-line no-lonely-if
                             if (currentAutoRepeat.time <= now) {
                                 if (currentAutoRepeat.positive) {
                                     autoRepeatedAxis.wasPositiveJustAutoRepeated = true;

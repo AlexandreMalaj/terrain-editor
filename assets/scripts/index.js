@@ -8,7 +8,6 @@ import LightManager from "./class/LightManager.js";
 import Terrain from "./Terrain.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const raycaster = new THREE.Raycaster();
     const gameDOM = document.getElementById("game");
     const game = new GameRenderer(gameDOM);
 
@@ -27,16 +26,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
     const terrain = new Terrain(128, camera);
 
-    const lightManager = new LightManager(game.currentScene);
-    const light = new THREE.PointLight();
-    const light2 = new THREE.PointLight();
-    const dirLight = new THREE.DirectionalLight();
-    lightManager.addLight(light);
-    lightManager.addLight(light2);
-    lightManager.addLight(dirLight);
+    // const lightManager = new LightManager(game.currentScene);
+    // const light = new THREE.PointLight();
+    // const light2 = new THREE.PointLight();
+    // const dirLight = new THREE.DirectionalLight();
+    // lightManager.addLight(light);
+    // lightManager.addLight(light2);
+    // lightManager.addLight(dirLight);
 
-    console.log(lightManager.allLights);
-    console.log(LightManager.lightName);
+    // console.log("lightManager.getAllLights()");
+    // console.log(lightManager.getAllLights());
+    // console.log("lightManager.helpers");
+    // console.log(lightManager.helpers);
+
+    // const transformControlsManager = new TransformControlsManager(camera, game.renderer, lightManager.helpers);
+    // console.log(LightManager.lightName);
 
     camera.position.z = 50;
     camera.position.y = 45;
@@ -48,7 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // const intersects = new THREE.Vector3();
         // raycaster.ray.intersectPlane(infinitPlane, intersects);
-        terrain.update();
-        freefly.update();
+        // lightManager.update();
+        // transformControlsManager.update();
+        // terrain.update();
+        // freefly.update();
     });
 });

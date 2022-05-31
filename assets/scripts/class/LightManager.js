@@ -9,6 +9,7 @@ const {
 export default class LightManager {
     constructor(scene) {
         this.allLights = new Map();
+        this.helpers = [];
         this.scene = scene;
     }
 
@@ -38,6 +39,8 @@ export default class LightManager {
                 helper = new PointLightHelper(light, 5);
                 break;
         }
+
+        this.helpers.push(helper);
         this.scene.add(helper);
 
         if (this.allLights.has(lightType)) {
@@ -51,5 +54,16 @@ export default class LightManager {
         }
     }
 
+
+    getAllLights() {
+        return [...this.allLights.values()].flat();
+    }
+
+    update() {
+        for (const helper of this.helpers) {
+            // console.log(helper);
+            helper.update();
+        }
+    }
 }
 LightManager.lightName = new Set([]);

@@ -14,6 +14,12 @@ export default class FreeFlyCamera extends EventEmitter {
             right: options.right || "KeyD",
             up: options.up || "Space",
             down: options.down || "ShiftLeft",
+            lookAround: options.lookAround || 1,
+
+            maxRollUp: options.maxRollUp || Math.PI / 2,
+            maxRollDown: options.maxRollUp || -Math.PI / 2,
+
+            rollSpeed: options.rollSpeed || 1,
             speed: options.speed || 0.1
         };
         // console.log(`${this.keys.forward} code: ${this.keys.forward.charCodeAt(0)}`);
@@ -28,6 +34,18 @@ export default class FreeFlyCamera extends EventEmitter {
         this.rollSpeed = 1;
 
         this.lockMouse = false;
+
+        game.on("update", () => {
+            this.update();
+        });
+    }
+
+    changeSpeed(speed) {
+        this.keys.speed = speed > 0.1 ? speed : 0.1;
+    }
+
+    changeRollSpeed(speed) {
+        this.keys.rollSpeed = speed > 0.1 ? speed : 0.1;
     }
 
     move() {
@@ -54,9 +72,9 @@ export default class FreeFlyCamera extends EventEmitter {
         }
 
         const translation = new THREE.Vector3(vector.x, 0, vector.z);
-        this.camera.position.y += vector.y * this.movementSpeed;
-
         this.camera.translateOnAxis(translation.normalize(), this.movementSpeed);
+
+        this.camera.position.y += vector.y * this.movementSpeed;
     }
 
     rotate() {
@@ -66,18 +84,18 @@ export default class FreeFlyCamera extends EventEmitter {
         euler.setFromQuaternion(this.camera.quaternion);
         euler.y -= mouseDelta.x * this.rollSpeed;
         euler.x += mouseDelta.y * this.rollSpeed;
-        euler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, euler.x));
+        euler.x = Math.max(this.keys.maxRollDown, Math.min(this.keys.maxRollUp, euler.x));
 
         this.camera.quaternion.setFromEuler(euler);
     }
 
     update() {
         this.move();
-        if (this.input.isMouseButtonDown(1)) {
+        if (this.input.isMouseButtonDown(this.keys.lookAround)) {
             this.input.lockMouse();
             this.rotate();
         }
-        if (this.input.wasMouseButtonJustReleased(1)) {
+        if (this.input.wasMouseButtonJustReleased(this.keys.lookAround)) {
             this.lockMouse = false;
             this.input.unlockMouse();
         }

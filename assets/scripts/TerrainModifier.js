@@ -19,10 +19,11 @@ export default class TerrainModifier {
 
         this.camera = camera;
         this.meshs = mesh;
+        console.log(mesh);
         this.points = points;
+        this.context2D = mesh.material.map.image.getContext("2d");
 
         this.currentMode = [...TerrainModifier.BRUSH_EDIT_MODE][0];
-
         this.raycaster = new Raycaster();
         this.brush = new Brush(10);
         this.brushStrength = 0.3;
@@ -48,15 +49,37 @@ export default class TerrainModifier {
         }
     }
 
+    draw2DCircleOnMouse(point) {
+        // this.meshs.updateMatrixWorld();
+        const localMeshPoint = this.meshs.worldToLocal(point);
+
+        // take a lot of ressource
+        // work with basicMaterial and canvas context2D as map
+        this.context2D.fillStyle = "#FFF";
+        this.context2D.fillRect(0, 0, this.context2D.canvas.width, this.context2D.canvas.height);
+        this.context2D.beginPath();
+        this.context2D.arc(
+            (localMeshPoint.x + this.terrain.size / 2) * 16,
+            (localMeshPoint.z + this.terrain.size / 2) * 16,
+            10 * 16, 0, 2 * Math.PI
+        );
+        this.context2D.lineWidth = 5;
+        this.context2D.strokeStyle = "#ff0000";
+        this.context2D.stroke();
+        this.meshs.material.map.needsUpdate = true;
+    }
+
     getPointsInBrush() {
         if (game.input.isMouseButtonDown(1)) {
             this.clearPoints();
 
             return {};
         }
-        const [intersect] = this.raycaster.intersectObject(this.meshs, false);
+        const [intersect] = this.raycaster.intersectObject(this.meshs);
         if (typeof intersect !== "undefined") {
             let { point } = intersect;
+            this.draw2DCircleOnMouse(point);
+
             if (game.input.wasKeyJustPressed("ControlLeft")) {
                 this.keepPointEditTerrain = point;
             }
@@ -91,7 +114,7 @@ export default class TerrainModifier {
                     }
                     const distance = Math.pow(x - point.x, 2) + Math.pow(z - point.z, 2);
                     if (distance <= radiusSq) {
-                        pointsArray.push(x, this.points[x][z].y + 0.05, z);
+                        pointsArray.push(x, this.points[x][z].y + 0.1, z);
                         pointsInBrush.push(this.points[x][z]);
                     }
                 }
@@ -110,7 +133,6 @@ export default class TerrainModifier {
 
         return {};
     }
-
 
     raiseLower() {
         const { brushPoint, pointsInBrush = [] } = this.getPointsInBrush();
