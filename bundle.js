@@ -6,18 +6,10 @@ const fs = require("fs");
 // Import Third-party Dependencies
 const esbuild = require("esbuild");
 
-// Import Internal Dependencies
-const pkg = require("./package.json");
-
 // CONSTANTS
 const kAssetsDir = path.join(__dirname, "assets");
-const kNodeModulesDir = path.join(__dirname, "node_modules");
-const kThreeDir = path.join(kNodeModulesDir, "three");
 
 const kOutDir = path.join(__dirname, "out");
-
-console.log(kAssetsDir);
-console.log(path.join(kAssetsDir, "scripts", "index.js"));
 
 fs.mkdirSync(kOutDir, { recursive: true });
 
