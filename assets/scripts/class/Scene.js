@@ -5,60 +5,60 @@ import * as THREE from "three";
 // import Actor = require("./Actor");
 
 export default class Scene {
-    constructor() {
-        this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color("black");
+  constructor() {
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color("black");
 
-        /** @type {Actor[]} */
-        this.actors = [];
+    /** @type {Actor[]} */
+    this.actors = [];
+  }
+
+  /**
+   * @function findActorByName
+   * @param {!string} name
+   * @param {!boolean} [lookForActorChildrens]
+   * @returns {Actor}
+   */
+  findActorByName(name, lookForActorChildrens = false) {
+    for (const actor of this.actors) {
+      if (actor.name === name) {
+        return actor;
+      }
+
+      if (!lookForActorChildrens) {
+        continue;
+      }
+
+      const actorChild = actor.getChildrenActorByName(name);
+      if (actorChild !== null) {
+        return actorChild;
+      }
     }
 
-    /**
-     * @function findActorByName
-     * @param {!string} name
-     * @param {!boolean} [lookForActorChildrens]
-     * @returns {Actor}
-     */
-    findActorByName(name, lookForActorChildrens = false) {
-        for (const actor of this.actors) {
-            if (actor.name === name) {
-                return actor;
-            }
+    return null;
+  }
 
-            if (!lookForActorChildrens) {
-                continue;
-            }
+  add(object) {
+    // if (object instanceof Actor) {
+    //     if (object.parent === null) {
+    //         this.actors.push(object);
+    //         this.scene.add(object.threeObject);
+    //     }
+    // }
+    // else {
+    //     this.scene.add(object);
+    // }
+    this.scene.add(object);
+  }
 
-            const actorChild = actor.getChildrenActorByName(name);
-            if (actorChild !== null) {
-                return actorChild;
-            }
-        }
-
-        return null;
+  clear() {
+    for (const actor of this.actors) {
+      actor.triggerBehaviorEvent("destroy");
     }
+    this.actors = [];
 
-    add(object) {
-        // if (object instanceof Actor) {
-        //     if (object.parent === null) {
-        //         this.actors.push(object);
-        //         this.scene.add(object.threeObject);
-        //     }
-        // }
-        // else {
-        //     this.scene.add(object);
-        // }
-        this.scene.add(object);
+    while (this.scene.children.length > 0) {
+      this.scene.remove(this.scene.children[0]);
     }
-
-    clear() {
-        for (const actor of this.actors) {
-            actor.triggerBehaviorEvent("destroy");
-        }
-        this.actors = [];
-
-        while (this.scene.children.length > 0) {
-            this.scene.remove(this.scene.children[0]);
-        }
-    }
+  }
 }

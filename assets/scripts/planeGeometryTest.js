@@ -6,18 +6,17 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer();
 
 window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
+  const newMin = Math.ceil(min);
+  const newMax = Math.floor(max);
 
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (newMax - newMin + 1)) + newMin;
 }
-
 
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -77,7 +76,6 @@ scene.add(plane);
 // geometry.vertices.push(vertex);
 
 
-
 // const vertexInd0 = geometry.vertices.length - 13;
 // const vertexInd1 = geometry.vertices.length - 2;
 // const vertexInd2 = geometry.vertices.length - 1;
@@ -105,7 +103,7 @@ camera.position.y = -4.5;
 camera.rotation.x = 0.5;
 
 function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
 }
 animate();

@@ -21,7 +21,7 @@ export default class TerrainModifier {
         this.meshs = mesh;
         console.log(mesh);
         this.points = points;
-        this.context2D = mesh.material.map.image.getContext("2d");
+        // this.context2D = mesh.material.map.image.getContext("2d");
 
         this.currentMode = [...TerrainModifier.BRUSH_EDIT_MODE][0];
         this.raycaster = new Raycaster();
@@ -78,7 +78,7 @@ export default class TerrainModifier {
         const [intersect] = this.raycaster.intersectObject(this.meshs);
         if (typeof intersect !== "undefined") {
             let { point } = intersect;
-            this.draw2DCircleOnMouse(point);
+            // this.draw2DCircleOnMouse(point);
 
             if (game.input.wasKeyJustPressed("ControlLeft")) {
                 this.keepPointEditTerrain = point;

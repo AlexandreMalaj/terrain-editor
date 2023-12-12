@@ -13,13 +13,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@slimio/eslint-config": "^4.1.0",
-    "electron": "^11.1.1",
-    "esbuild": "^0.8.26",
-    "eslint": "^7.0.0",
+    "@nodesecure/eslint-config": "^1.9.0",
+    "esbuild": "^0.19.5",
+    "eslint": "^8.53.0",
     "watch-cli": "^0.2.3"
   },
   "dependencies": {
-    "three": "^0.124.0"
+    "electron": "^28.0.0",
+    "three": "^0.158.0"
   }
 }

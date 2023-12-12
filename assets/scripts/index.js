@@ -8,53 +8,53 @@ import LightManager from "./class/LightManager.js";
 import Terrain from "./Terrain.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const gameDOM = document.getElementById("game");
-    const game = new GameRenderer(gameDOM);
+  const gameDOM = document.getElementById("game");
+  const game = new GameRenderer(gameDOM);
 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    // camera.far = 100;
-    game.init(camera);
-    window.game = game;
-    // camera.up.set(0, 1, 0);
-    // const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
-    // const helper = new THREE.PlaneHelper(plane, 1, 0xffff00);
-    // game.currentScene.add(helper);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  // camera.far = 100;
+  game.init(camera);
+  window.game = game;
+  // camera.up.set(0, 1, 0);
+  // const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
+  // const helper = new THREE.PlaneHelper(plane, 1, 0xffff00);
+  // game.currentScene.add(helper);
 
-    const axesHelper = new THREE.AxesHelper(5);
-    game.currentScene.add(axesHelper);
+  const axesHelper = new THREE.AxesHelper(5);
+  game.currentScene.add(axesHelper);
 
-    const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
-    const terrain = new Terrain(128, camera);
+  const freefly = new FreeFlyCamera(camera, { speed: 0.5 });
+  const terrain = new Terrain(128, camera);
 
-    // const lightManager = new LightManager(game.currentScene);
-    // const light = new THREE.PointLight();
-    // const light2 = new THREE.PointLight();
-    // const dirLight = new THREE.DirectionalLight();
-    // lightManager.addLight(light);
-    // lightManager.addLight(light2);
-    // lightManager.addLight(dirLight);
+  const lightManager = new LightManager(game.currentScene);
+  const light = new THREE.PointLight();
+  const light2 = new THREE.PointLight();
+  const dirLight = new THREE.DirectionalLight();
+  lightManager.addLight(light);
+  lightManager.addLight(light2);
+  lightManager.addLight(dirLight);
 
-    // console.log("lightManager.getAllLights()");
-    // console.log(lightManager.getAllLights());
-    // console.log("lightManager.helpers");
-    // console.log(lightManager.helpers);
+  console.log("lightManager.getAllLights()");
+  console.log(lightManager.getAllLights());
+  console.log("lightManager.helpers");
+  console.log(lightManager.helpers);
 
-    // const transformControlsManager = new TransformControlsManager(camera, game.renderer, lightManager.helpers);
-    // console.log(LightManager.lightName);
+  const transformControlsManager = new TransformControlsManager(camera, game.renderer, lightManager.helpers);
+  // console.log(LightManager.lightName);
 
-    camera.position.z = 50;
-    camera.position.y = 45;
-    camera.rotation.x = -0.5;
+  camera.position.z = 50;
+  camera.position.y = 45;
+  camera.rotation.x = -0.5;
 
-    game.on("update", () => {
-        // const mousePos = game.input.getMousePosition();
-        // raycaster.setFromCamera(mousePos, camera);
+  game.on("update", () => {
+    // const mousePos = game.input.getMousePosition();
+    // raycaster.setFromCamera(mousePos, camera);
 
-        // const intersects = new THREE.Vector3();
-        // raycaster.ray.intersectPlane(infinitPlane, intersects);
-        // lightManager.update();
-        // transformControlsManager.update();
-        // terrain.update();
-        // freefly.update();
-    });
+    // const intersects = new THREE.Vector3();
+    // raycaster.ray.intersectPlane(infinitPlane, intersects);
+    // lightManager.update();
+    transformControlsManager.update();
+    // terrain.update();
+    // freefly.update();
+  });
 });

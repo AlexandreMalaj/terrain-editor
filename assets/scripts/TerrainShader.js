@@ -36,15 +36,15 @@ export default function terrainShader(uniforms = Object.create(null)) {
         varying vec3 fragPos;
 
         struct PhongMaterial {
-            vec3 position;  
-          
+            vec3 position;
+
             vec3 ambientColor;
             vec3 diffuseColor;
             vec3 specularColor;
             float ambientStrength;
             float specularStrength;
             float shininess;
-            
+
             float constant;
             float linear;
             float quadratic;
@@ -119,6 +119,7 @@ export default function terrainShader(uniforms = Object.create(null)) {
 
             vec3 lightResult = phongLight(phongMaterial);
             gl_FragColor = normalTex * vec4(lightResult, 1);
+            // gl_FragColor = yaxis;
         }
     `;
 
